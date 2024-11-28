@@ -45,14 +45,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void clearText(String sourceOrTargetText)
+  void clearText()
   {
-    if (sourceOrTargetText == 'source') {
-      sourceText = '';
-    }
-    else {
-      targetText = '';
-    }
+    sourceText = '';
+    targetText = '';
   }
 
   void copyText(String sourceOrTargetText) {
@@ -213,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   margin: EdgeInsets.fromLTRB(10,18,10,0),
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    sourceText,
+                    sourceText.isEmpty ? 'Введите текст' : sourceText,
                     style: TextStyle(
                       fontSize: 20,
                       fontFamily: 'Times New Roman',
@@ -229,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: IconButton(
                     onPressed: () {
                       setState(() {
-                        clearText('source');
+                        clearText();
                       });
                     },
                     icon: Icon(Icons.close, color: Colors.white),
@@ -270,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   margin: EdgeInsets.fromLTRB(10,18,10,0),
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    targetText,
+                    targetText.isEmpty ? "Перевод" : targetText,
                     style: TextStyle(
                       fontSize: 20,
                       fontFamily: 'Times New Roman',
@@ -278,18 +274,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.left,
-                  ),
-                ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        clearText('target');
-                      });
-                    },
-                    icon: Icon(Icons.close, color: Colors.white),
                   ),
                 ),
                 Positioned(
