@@ -1,0 +1,10 @@
+*
+
+!.gitignore
+!pubspec.yaml
+
+!lib/
+!src/
+
+lib/**
+src/**
