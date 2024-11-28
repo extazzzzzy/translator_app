@@ -1,10 +1,14 @@
+# Игнорировать всё
 *
 
+# Исключения для .gitignore и pubspec.yaml
 !.gitignore
 !pubspec.yaml
 
+# Исключения для папок lib и src
 !lib/
 !src/
 
-lib/**
-src/**
+# Игнорирование всего в папках src и lib отменено
+!lib/**
+!src/**
