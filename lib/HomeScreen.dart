@@ -4,6 +4,7 @@ import 'gameScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'background_video.dart';
+import 'package:flutter/services.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -11,42 +12,86 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Future<void> translateText() async {
-    // URL для запроса
-    final String url = 'http://91.198.71.199:7012/translator'; // Замените на ваш URL
+  String sourceLanguage = 'rus_Cyrl';
+  String targetLanguage = 'mancy_Cyrl';
 
-    // Тело запроса
+  String sourceLanguageText = 'Русский';
+  String targetLanguageText = 'Мансийский';
+  String sourceText = 'Привет';
+  String targetText = '';
+
+  void changeLanguage() {
+    if (sourceLanguageText == 'Русский') {
+      sourceLanguageText = 'Мансийский';
+      targetLanguageText = 'Русский';
+
+      sourceLanguage = 'mancy_Cyrl';
+      targetLanguage = 'rus_Cyrl';
+
+      var temp = sourceText;
+      sourceText = targetText;
+      targetText = temp;
+    }
+    else {
+      sourceLanguageText = 'Русский';
+      targetLanguageText = 'Мансийский';
+
+      sourceLanguage = 'rus_Cyrl';
+      targetLanguage = 'mancy_Cyrl';
+
+      var temp = sourceText;
+      sourceText = targetText;
+      targetText = temp;
+    }
+  }
+
+  void clearText(String sourceOrTargetText)
+  {
+    if (sourceOrTargetText == 'source') {
+      sourceText = '';
+    }
+    else {
+      targetText = '';
+    }
+  }
+
+  void copyText(String sourceOrTargetText) {
+    if (sourceOrTargetText == 'source') {
+      Clipboard.setData(ClipboardData(text: sourceText));
+    }
+    else {
+      Clipboard.setData(ClipboardData(text: targetText));
+    }
+  }
+
+  Future<void> translateText() async {
+    final String url = 'http://91.198.71.199:7012/translator';
+
     final Map<String, String> requestBody = {
-      "text": "Паща о̄лэн. Наӈ ос хумус о̄лэ̄гын, я̄тил утум?",
-      "sourceLanguage": "mancy_Cyrl",
-      "targetLanguage": "rus_Cyrl",
+      "text": sourceText,
+      "sourceLanguage": sourceLanguage,
+      "targetLanguage": targetLanguage,
     };
 
-    // Отправка POST запроса
     final response = await http.post(
       Uri.parse(url),
       headers: {"Content-Type": "application/json"},
       body: json.encode(requestBody),
     );
 
-    // Проверка ответа
     if (response.statusCode == 200) {
       final responseData = json.decode(utf8.decode(response.bodyBytes));
-
-      // Извлекаем переведённый текст
-      final translatedText = responseData['translatedText'];
-
-      // Выводим результат
-      print('Translated Text: $translatedText');
-    } else {
-      // В случае ошибки
+      setState(() {
+        targetText = responseData['translatedText'];
+      });
+    }
+    else {
       print('Error: ${response.statusCode}');
     }
   }
   @override
   void initState() {
     super.initState();
-    translateText();
   }
 
   @override
@@ -107,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Русский',
+                        sourceLanguageText,
                         style: TextStyle(
                           fontSize: 20,
                           color: Colors.white,
@@ -119,7 +164,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: EdgeInsets.only(right: 5.0),
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        changeLanguage();
+                      });
+                    },
                     color: Colors.white,
                     icon: Icon(Icons.compare_arrows_rounded),
                     iconSize: 40,
@@ -130,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Мансийский',
+                        targetLanguageText,
                         style: TextStyle(
                           fontSize: 20,
                           color: Colors.white,
@@ -164,21 +213,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   margin: EdgeInsets.fromLTRB(10,18,10,0),
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    'value 1',
+                    sourceText,
                     style: TextStyle(
                       fontSize: 20,
                       fontFamily: 'Times New Roman',
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.left,
                   ),
                 ),
                 Positioned(
                   top: 10,
                   right: 10,
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        clearText('source');
+                      });
+                    },
                     icon: Icon(Icons.close, color: Colors.white),
                   ),
                 ),
@@ -186,7 +239,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   bottom: 10,
                   right: 10,
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      copyText('source');
+                    },
                     icon: Icon(Icons.copy, color: Colors.white),
                   ),
                 ),
@@ -215,21 +270,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   margin: EdgeInsets.fromLTRB(10,18,10,0),
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    'value 2',
+                    targetText,
                     style: TextStyle(
                       fontSize: 20,
                       fontFamily: 'Times New Roman',
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.left,
                   ),
                 ),
                 Positioned(
                   top: 8,
                   right: 8,
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        clearText('target');
+                      });
+                    },
                     icon: Icon(Icons.close, color: Colors.white),
                   ),
                 ),
@@ -237,12 +296,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   bottom: 8,
                   right: 8,
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      copyText('target');
+                    },
                     icon: Icon(Icons.copy, color: Colors.white),
                   ),
                 ),
               ],
             ),
+          ),
+          TextButton(
+            onPressed: translateText,
+              child: Text(
+                'Перевести',
+              ),
           ),
         ],
       ),
