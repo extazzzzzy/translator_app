@@ -58,6 +58,7 @@ flutter:
     - src/translation_db/phrases.xlsx
     - src/translation_db/words.xlsx
     - src/design/material/background2.mp4
+    - src/img/1.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
