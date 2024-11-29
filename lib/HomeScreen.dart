@@ -152,12 +152,29 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               AppBar(
                 backgroundColor: Colors.transparent,
                 elevation: 0,
-                title: Text(
-                  'Translator',
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                title: null,
+                flexibleSpace: Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.only(top: 5, bottom: 5),
+                  decoration: BoxDecoration(
+                    color: Color.fromRGBO(37, 49, 73, 0.6),
+                    //borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 3,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    'Translator',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -168,8 +185,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       Container(
                         margin: EdgeInsets.only(top: 20, left: 10, right: 10),
                         decoration: BoxDecoration(
-                          color: Color.fromRGBO(13, 191, 28, 1.0),
+                          color: Color.fromRGBO(13, 191, 28, 0.8),
                           borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Color.fromRGBO(12, 152, 24, 1.0), width: 3.5),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -226,17 +244,17 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                              AnimatedOpacity(
-                                opacity: _isTextVisible ? 1.0 : 0.0,
-                                duration: Duration(milliseconds: 300),
-                                child: Text(
-                                  targetLanguageText,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.white,
+                                  AnimatedOpacity(
+                                    opacity: _isTextVisible ? 1.0 : 0.0,
+                                    duration: Duration(milliseconds: 300),
+                                    child: Text(
+                                      targetLanguageText,
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
 
                                 ],
                               ),
@@ -249,8 +267,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         width: 390,
                         margin: EdgeInsets.only(top: 15, right: 10, left: 10),
                         decoration: BoxDecoration(
-                          color: Color.fromRGBO(77, 91, 129, 1.0),
+                          color: Color.fromRGBO(77, 91, 129, 0.45),
                           borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: Color.fromRGBO(40, 62, 117, 0.45),
+                              width: 3.5
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.2),
@@ -322,8 +344,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         width: 390,
                         margin: EdgeInsets.only(top: 15, right: 10, left: 10),
                         decoration: BoxDecoration(
-                          color: Color.fromRGBO(37, 49, 73, 1.0),
+                          color: Color.fromRGBO(37, 49, 73, 0.6),
                           borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: Color.fromRGBO(35, 47, 74, 0.6),
+                              width: 3.5
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.2),
@@ -368,18 +394,40 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           ],
                         ),
                       ),
-                      TextButton(
-                        onPressed: isTranslating
-                            ? null
-                            : () {
-                          setState(() {
-                            translateText();
-                          });
-                        },
-                        child: Text(
-                          'Перевести',
+                      Container(
+                        margin: EdgeInsets.fromLTRB(10,18,10,0),
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(16, 216, 49, 0.8),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              spreadRadius: 3,
+                              blurRadius: 5,
+                              offset: Offset(0, 3)
+                          ),],
+                        ),
+                        child: TextButton(
+                          onPressed: isTranslating
+                              ? null
+                              : () {
+                            setState(() {
+                              translateText();
+                            });
+                          },
+                          child: Text(
+                            'Перевести',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          ),
                         ),
                       ),
+                      BuildButtonRow(['ā', 'ē', 'ё̄', '̄ӣ', 'ӈ', 'о̄', 'ӯ', 'ы̄', 'э̄', 'ю̄', 'я̄']),
+                      BuildButtonRow(['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ']),
+                      BuildButtonRow(['ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э']),
+                      BuildButtonRow(['↑', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '',]),
+                      BuildButtonRow(['Пробел']),
                     ],
                   ),
                 ),
@@ -387,6 +435,50 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ],
           ),
         ],
+      ),
+    );
+  }
+  Widget BuildButtonRow(List<String> buttons) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: buttons.map((button) {
+        return ButtonStyle(button);
+      }).toList(),
+    );
+  }
+
+  Widget ButtonStyle(String label) {
+    double valButWidth = 45;
+    double valButHeight = 65;
+    if (label == 'Пробел') {
+      valButWidth = 140;
+      valButHeight = 90;
+    }
+    return GestureDetector(
+      onTap: () {
+        //Сюда функцию для ввода строки
+      },
+      child: Container(
+        margin: EdgeInsets.all(8),
+        width: valButWidth,
+        height: valButHeight,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(60, 70, 101, 0.60),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+              color: Color.fromRGBO(53, 63, 90, 0.85),
+              width: 3.5
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 35,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
