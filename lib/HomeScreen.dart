@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   String targetLanguage = 'mancy_Cyrl';
   String sourceLanguageText = 'Русский';
   String targetLanguageText = 'Мансийский';
-  String sourceText = '';
+  String sourceText = 'Цветок';
   String targetText = '';
 
   void changeLanguage() {
