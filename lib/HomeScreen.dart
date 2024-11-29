@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
@@ -53,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   String targetLanguage = 'mancy_Cyrl';
   String sourceLanguageText = 'Русский';
   String targetLanguageText = 'Мансийский';
-  String sourceText = 'Привет';
+  String sourceText = 'Aaaaaaaaaaaaaadasdasjndajsklnalksjdnaskldjnasdjklndjkndnnwqidnasdfnsvkdjgbnsdklfgbsklfnasdkjfnsdjgfnjklsdngkjldfngjkldfngjndfjkgndfjkgnkdfasndkasnjdkosanjkdnasjpfsdfkgndfg';
   String targetText = '';
 
   void changeLanguage() {
@@ -137,6 +139,23 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     });
   }
 
+  void editSourceText(String label) {
+    if (label == '⌫' && sourceText.length > 0) {
+      sourceText = sourceText.substring(0, sourceText.length - 1);
+    }
+    else if (label == '') {
+      sourceText += ' ';
+    }
+    else {
+      if (isCapsLock == false) {
+        sourceText += label;
+      }
+      else {
+        sourceText += label.toUpperCase();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 elevation: 0,
                 centerTitle: true,
                 title: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       onPressed: (){},
@@ -164,10 +183,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       ),
                     ),
                     Text(
-                      'Translator',
+                      'Мансийский \n переводчик',
                       style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        fontFamily: 'Montserrat',
                         color: Colors.white,
                       ),
                     ),
@@ -187,11 +206,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     children: [
                       Container(
                         margin: EdgeInsets.only(top: 20, left: 10, right: 10),
-                        decoration: BoxDecoration(
-                          color: Color.fromRGBO(13, 191, 28, 0.8),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Color.fromRGBO(12, 152, 24, 1.0), width: 3.5),
-                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -207,6 +221,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                       style: TextStyle(
                                         fontSize: 20,
                                         color: Colors.white,
+                                          fontFamily: 'Montserrat',
                                       ),
                                     ),
                                   )
@@ -255,6 +270,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                       style: TextStyle(
                                         fontSize: 20,
                                         color: Colors.white,
+                                        fontFamily: 'Montserrat',
                                       ),
                                     ),
                                   ),
@@ -270,10 +286,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         width: 390,
                         margin: EdgeInsets.only(top: 15, right: 10, left: 10),
                         decoration: BoxDecoration(
-                          color: Color.fromRGBO(9, 147, 140, 0.45),
+                          color: Color.fromRGBO(9, 147, 140, 0.5),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                              color: Color.fromRGBO(8, 133, 126, 0.45),
+                              color: Color.fromRGBO(8, 133, 126, 0.5),
                               width: 3.5
                           ),
                           boxShadow: [
@@ -287,23 +303,25 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         ),
                         child: Stack(
                           children: [
-                            Container(
-                              margin: EdgeInsets.fromLTRB(10, 18, 10, 0),
-                              padding: EdgeInsets.all(10),
-                              child: AnimatedOpacity(
-                                opacity: _isTextVisible ? 1.0 : 0.0,
-                                duration: Duration(milliseconds: 300),
-                                child: Text(
-                                  sourceText.isEmpty
-                                      ? 'Введите текст'
-                                      : sourceText,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontFamily: 'Times New Roman',
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(10, 18, 10, 18),
+                              child: SingleChildScrollView(
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth: 300,
                                   ),
-                                  textAlign: TextAlign.left,
+                                  child: AnimatedOpacity(
+                                    opacity: _isTextVisible ? 1.0 : 0.0,
+                                    duration: Duration(milliseconds: 300),
+                                    child: Text(
+                                      sourceText.isEmpty ? 'Введите текст' : sourceText,
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontFamily: 'Montserrat',
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -326,6 +344,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 icon: Icon(
                                   Icons.close,
                                   color: isTranslating ? Colors.grey : Colors.white,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 0,
+                              bottom: 0,
+                              right: 10,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(Icons.add, color: Colors.white),
                                 ),
                               ),
                             ),
@@ -364,23 +394,25 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         ),
                         child: Stack(
                           children: [
-                            Container(
-                              margin: EdgeInsets.fromLTRB(10, 18, 10, 0),
-                              padding: EdgeInsets.all(10),
-                              child: AnimatedOpacity(
-                                opacity: _isTextVisible ? 1.0 : 0.0,
-                                duration: Duration(milliseconds: 300),
-                                child: Text(
-                                  targetText.isEmpty
-                                      ? "Перевод"
-                                      : targetText,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontFamily: 'Times New Roman',
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(10, 18, 10, 18),
+                              child: SingleChildScrollView(
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth: 300,
                                   ),
-                                  textAlign: TextAlign.left,
+                                  child: AnimatedOpacity(
+                                    opacity: _isTextVisible ? 1.0 : 0.0,
+                                    duration: Duration(milliseconds: 300),
+                                    child: Text(
+                                      targetText.isEmpty ? 'Перевод' : targetText,
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontFamily: 'Montserrat',
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -401,8 +433,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       BuildButtonRow(['ā', 'ē', 'ё̄', 'ӣ', 'ӈ', 'о̄', 'ӯ', 'ы̄', 'э̄', 'ю̄', 'я̄']),
                       BuildButtonRow(['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ']),
                       BuildButtonRow(['ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э']),
-                      BuildButtonRow(['↑', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '',]),
-                      BuildButtonRow(['Пробел']),
+                      BuildButtonRow(['↑', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '⌫',]),
+                      BuildButtonRow([',', 'Пробел', '.']),
                     ],
                   ),
                 ),
@@ -422,6 +454,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
+  bool isCapsLock = false;
+  Timer? _debounceTimer;
+
   Widget ButtonStyle(String label) {
     double valButWidth = 29;
     double valButHeight = 42;
@@ -433,6 +468,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       valButHeight = 35;
       label = '';
       borderCircul = 30;
+      margVert = 8;
     }
     if (['ā','ē','ё̄','ӣ','ӈ','о̄','ӯ','ы̄','э̄','ю̄','я̄'].contains(label)) {
       margHoris = 3;
@@ -446,13 +482,23 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       margHoris = 3;
       margVert = 3;
     }
-    else if (['↑','я','ч','с','м','и','т','ь','б','ю','',].contains(label)) {
+    else if (['↑','я','ч','с','м','и','т','ь','б','ю','⌫',].contains(label)) {
       margHoris = 2;
       margVert = 3;
     }
     return GestureDetector(
       onTap: () {
-        //Сюда функцию для ввода строки
+        setState(() {
+          if (label == '↑') {
+            isCapsLock = !isCapsLock;
+          } else {
+            editSourceText(label);
+            _debounceTimer?.cancel();
+            _debounceTimer = Timer(Duration(seconds: 1), () {
+              translateText();
+            });
+          }
+        });
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: margHoris, vertical: margVert),
@@ -468,10 +514,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ),
         ),
         child: Text(
-          label,
+          isCapsLock ? label.toUpperCase() : label,
           style: TextStyle(
             fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontFamily: 'Montserrat',
             color: Colors.white,
           ),
         ),

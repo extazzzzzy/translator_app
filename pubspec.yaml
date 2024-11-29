@@ -54,7 +54,6 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - src/design/material/background.mp4
     - src/translation_db/sentences.xlsx
     - src/translation_db/phrases.xlsx
     - src/translation_db/words.xlsx
