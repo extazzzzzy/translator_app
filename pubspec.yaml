@@ -54,11 +54,16 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - src/translation_db/sentences.xlsx
-    - src/translation_db/phrases.xlsx
-    - src/translation_db/words.xlsx
+    - src/translation_db/translations.xlsx
     - src/design/material/background2.mp4
-    - src/img/1.png
+    - src/img/glad.png
+    - src/img/merry1.png
+    - src/img/merry2.png
+    - src/img/merry3.png
+    - src/img/angry.png
+    - src/img/sad.png
+    - src/img/surprised.png
+    - src/img/confused.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

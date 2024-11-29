@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:translator/FavoriteWordsScreen.dart';
+import 'package:translator/HomeScreen.dart';
 import 'package:translator/GamingScreen.dart';
 
 void main() => runApp(MyApp());
@@ -11,7 +13,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: GameScreen(),
+      home: GamingScreen(),
     );
   }
 }

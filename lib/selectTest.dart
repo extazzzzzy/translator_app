@@ -40,7 +40,7 @@ class selectTest extends State<selectTestScreen> {
                 onTap: () {
                   /*Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => gameScreen(),
+                      MaterialPageRoute(builder: (context) => GameScreen(),
                     ));*/
                 },
                 child: Text(
@@ -63,7 +63,7 @@ class selectTest extends State<selectTestScreen> {
                 onTap: () {
                   /*Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => gameScreen(),
+                      MaterialPageRoute(builder: (context) => GameScreen(),
                     ));*/
                 },
                 child: Text(

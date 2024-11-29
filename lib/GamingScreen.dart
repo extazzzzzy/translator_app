@@ -1,63 +1,155 @@
-import 'dart:math'; // Для генерации случайных чисел
-import 'package:excel/excel.dart' as excel; // Для работы с Excel
-import 'package:flutter/services.dart'; // Для загрузки ассетов
+import 'dart:math';
+import 'package:excel/excel.dart' as exel;
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:video_player/video_player.dart';
-import 'package:http/http.dart' as http;
-import 'dart:ui';
 
-class GameScreen extends StatefulWidget
+class GamingScreen extends StatefulWidget
 {
-  const GameScreen({super.key});
+  const GamingScreen({super.key});
 
   @override
-  State<GameScreen> createState() => _GameScreenState();
+  State<GamingScreen> createState() => _GamingScreenState();
 }
 
-class _GameScreenState extends State<GameScreen>
+class _GamingScreenState extends State<GamingScreen>
 {
+  String defaultSheetName = "words";
+  List<Map<String, String>> pairs = [];
+  int rightAnswersCount = 0;
+  int taskCount = 10;
+  int currentTaskIndex = 0;
+  int timer = 0;
+  late Timer _timer;
 
-  Future<void> pickRandomRow() async
+  bool isAnswerShowing = false;
+  String buttonText = "Проверить";
+
+  String sourceLanguage = "Мансийский";
+  String targetLanguage = "Русский";
+  String question = "";
+  String answer = "Привет! Давай поиграем!";
+
+  List<String> goodGirlFaceNames = ["glad", "merry1", "merry2", "merry3"];
+  List<String> badGirlFaceNames = ["angry", "sad", "confused", "surprised"];
+  String girlFaceName = "glad";
+
+  Future<void> pickRandomRows(int count) async
   {
     try
     {
-      // Загружаем файл из ассетов
-      ByteData data = await rootBundle.load('src/translation_db/words.xlsx');
+      ByteData data = await rootBundle.load('src/translation_db/translations.xlsx');
       var bytes = data.buffer.asUint8List();
 
-      // Парсим Excel
-      var excelFile  = excel.Excel.decodeBytes(bytes);
+      var excel = exel.Excel.decodeBytes(bytes);
 
-      // Читаем данные из первого листа
-      for (var table in excelFile.tables.keys)
+      var sheet = excel.tables[defaultSheetName];
+      if (sheet == null)
       {
-        var sheet = excelFile.tables[table];
-        if (sheet != null) {
-          // Проверяем, что в таблице есть строки
-          if (sheet.rows.isEmpty) {
-            print("Таблица пуста!");
-            return;
-          }
-
-          int randomIndex = Random().nextInt(sheet.rows.length - 1) + 1;
-          var randomRow = sheet.rows[randomIndex];
-
-          // Получаем значения из первого и третьего столбцов
-          var firstColumnValue = randomRow[0]?.value ?? "пусто";
-          var thirdColumnValue = randomRow[2]?.value ?? "пусто";
-
-          // Выводим результат
-          print("Случайная строка $randomIndex");
-          print("Первый столбец: $firstColumnValue");
-          print("Третий столбец: $thirdColumnValue");
-        }
-        break; // Читаем только первый лист
+        throw Exception("Лист '$defaultSheetName' не найден!");
       }
+
+      List<int> indexes = [];
+      while (indexes.length < count)
+      {
+        int randomIndex = Random().nextInt(sheet.rows.length - 1) + 1;
+        if (!indexes.contains(randomIndex))
+        {
+          indexes.add(randomIndex);
+        }
+      }
+
+      List<Map<String, String>> tempPairs = [];
+      for (int index in indexes)
+      {
+        var row = sheet.rows[index];
+        var firstColumnValue = row[0]?.value?.toString().toLowerCase() ?? "пусто";
+        var thirdColumnValue = row[2]?.value?.toString().toLowerCase() ?? "пусто";
+        tempPairs.add
+        ({
+          "Русский": firstColumnValue,
+          "Мансийский": thirdColumnValue,
+        });
+      }
+      
+      setState(()
+      {
+        pairs = tempPairs;
+        rightAnswersCount = 0;
+        currentTaskIndex = 0;
+        timer = 0;
+        question = pairs[currentTaskIndex][sourceLanguage]!;
+        sourceText = pairs[currentTaskIndex][targetLanguage]!;
+      });
+      
+      _timer = Timer.periodic(Duration(seconds: 1), (timer)
+      {
+        setState(()
+        {
+          this.timer++;
+        });
+      });
+      
     }
-    catch (e)
+    catch(e)
     {
       print("Ошибка: $e");
     }
+  }
+
+  void checkAnswer(String userAnswer)
+  {
+    setState(()
+    {
+      if (!isAnswerShowing)
+      {
+        clearText();
+        var correctAnswer = pairs[currentTaskIndex][targetLanguage];
+        currentTaskIndex++;
+        
+        if (currentTaskIndex >= pairs.length)
+        {
+          if (buttonText == "Вернуться")
+          {
+            // ПЕРЕХОД НА ДРУГУЮ СТРАНИЦУ
+          }
+          else
+          {
+            _timer.cancel();
+            isAnswerShowing = false;
+            buttonText = "Вернуться";
+            question = "Выполнено верно: $rightAnswersCount/10";
+            answer = "Время: ${timer ~/ 60} мин ${timer % 60} сек";
+            currentTaskIndex--;
+          }
+        }
+        else
+        {
+          question = pairs[currentTaskIndex][sourceLanguage]!;
+          answer = "Правильный ответ: " + pairs[currentTaskIndex-1][targetLanguage]!;
+          sourceText = pairs[currentTaskIndex][targetLanguage]!; // ЧИТ НА ОТВЕТ
+        }
+
+        if (userAnswer.trim().toLowerCase() == correctAnswer?.trim().toLowerCase())
+        {
+          girlFaceName = goodGirlFaceNames[Random().nextInt(goodGirlFaceNames.length - 1)];
+          rightAnswersCount++;
+        }
+        else
+        {
+          girlFaceName = badGirlFaceNames[Random().nextInt(badGirlFaceNames.length - 1)];
+        }
+
+        isAnswerShowing = true;
+        buttonText = "Далее";
+      }
+      else
+      {
+        isAnswerShowing = false;
+        buttonText = "Проверить";
+      }
+    });
   }
 
   late VideoPlayerController _controllerVideo;
@@ -68,7 +160,8 @@ class _GameScreenState extends State<GameScreen>
   bool isTranslating = false;
 
   @override
-  void initState() {
+  void initState()
+  {
     super.initState();
     _controllerVideo = VideoPlayerController.asset("src/design/material/background2.mp4")
       ..initialize().then((_) {
@@ -78,32 +171,41 @@ class _GameScreenState extends State<GameScreen>
           _controllerVideo.play();
         });
       });
+      pickRandomRows(taskCount);
   }
 
   @override
-  void dispose() {
+  void dispose()
+  {
     _controllerVideo.dispose();
     _controllerAnimation.dispose();
+    _timer.cancel();
     super.dispose();
   }
   String sourceText = '';
 
-  void clearText() {
+  void clearText()
+  {
     sourceText = '';
   }
 
-  void editSourceText(String label) {
-    if (label == '⌫' && sourceText.length > 0) {
+  void editSourceText(String label)
+  {
+    if (label == '⌫' && sourceText.length > 0)
+    {
       sourceText = sourceText.substring(0, sourceText.length - 1);
     }
-    else if (label == '') {
+    else if (label == '')
+    {
       sourceText += ' ';
     }
     else {
-      if (isCapsLock == false) {
+      if (isCapsLock == false)
+      {
         sourceText += label;
       }
-      else {
+      else
+      {
         sourceText += label.toUpperCase();
       }
     }
@@ -166,7 +268,7 @@ class _GameScreenState extends State<GameScreen>
                               Container(
                                 margin: EdgeInsets.only(right: 15, left: 15, bottom: 20),
                                 child: Image.asset(
-                                  'src/img/1.png',
+                                  "src/img/" + girlFaceName + ".png",
                                   height: 180,
                                 ),
                               ),
@@ -180,8 +282,8 @@ class _GameScreenState extends State<GameScreen>
                                       color: Color.fromRGBO(9, 147, 140, 0.45),
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(
-                                          color: Color.fromRGBO(6, 78, 73, 0.3),
-                                          width: 3.5
+                                        color: Color.fromRGBO(6, 78, 73, 0.3),
+                                        width: 3.5,
                                       ),
                                       boxShadow: [
                                         BoxShadow(
@@ -197,71 +299,74 @@ class _GameScreenState extends State<GameScreen>
                                         Container(
                                           margin: EdgeInsets.fromLTRB(10, 18, 10, 0),
                                           padding: EdgeInsets.all(10),
-                                          child: AnimatedOpacity(
+                                          child: AnimatedOpacity
+                                          (
                                             opacity: _isTextVisible ? 1.0 : 0.0,
                                             duration: Duration(milliseconds: 300),
                                             child: Text(
-                                              "Вопрос",
+                                              question,
                                               style: TextStyle(
                                                 fontSize: 20,
                                                 fontFamily: 'Montserrat',
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.white,
                                               ),
-                                              textAlign: TextAlign.left,
-                                            ),
+                                            textAlign: TextAlign.left,),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  Container(
-                                    height: 130,
-                                    width: 180,
-                                    margin: EdgeInsets.only(top: 15, right: 10),
-                                    decoration: BoxDecoration(
-                                      color: Color.fromRGBO(9, 147, 140, 0.45),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
+                                  Visibility(
+                                    visible: isAnswerShowing,
+                                    child: Container(
+                                      height: 130,
+                                      width: 180,
+                                      margin: EdgeInsets.only(top: 15, right: 10),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromRGBO(9, 147, 140, 0.45),
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
                                           color: Color.fromRGBO(6, 78, 73, 0.3),
-                                          width: 3.5
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.2),
-                                          spreadRadius: 3,
-                                          blurRadius: 5,
-                                          offset: Offset(0, 3),
+                                          width: 3.5,
                                         ),
-                                      ],
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.fromLTRB(10, 18, 10, 0),
-                                          padding: EdgeInsets.all(10),
-                                          child: AnimatedOpacity(
-                                            opacity: _isTextVisible ? 1.0 : 0.0,
-                                            duration: Duration(milliseconds: 300),
-                                            child: Text(
-                                              "Ответ",
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                fontFamily: 'Montserrat',
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.2),
+                                            spreadRadius: 3,
+                                            blurRadius: 5,
+                                            offset: Offset(0, 3),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          Container(
+                                            margin: EdgeInsets.fromLTRB(10, 18, 10, 0),
+                                            padding: EdgeInsets.all(10),
+                                            child: AnimatedOpacity(
+                                              opacity: _isTextVisible ? 1.0 : 0.0,
+                                              duration: Duration(milliseconds: 300),
+                                              child: Text(
+                                                answer,
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontFamily: 'Montserrat',
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                                textAlign: TextAlign.left,
                                               ),
-                                              textAlign: TextAlign.left,
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
+                                        ],
+                                      ),
+                                    )
                                   ),
                                 ],
                               )
-                            ],
-                          ),
+                            ]
+                          )
                         ),
                         Container(
                           height: 100,
@@ -324,11 +429,11 @@ class _GameScreenState extends State<GameScreen>
                           ),
                         ),
                         Container(margin: EdgeInsets.symmetric(vertical: 2),),
-                        BuildButtonRow(['ā', 'ē', 'ё̄', 'ӣ', 'ӈ', 'о̄', 'ӯ', 'ы̄', 'э̄', 'ю̄', 'я̄']),
-                        BuildButtonRow(['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ']),
-                        BuildButtonRow(['ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э']),
-                        BuildButtonRow(['↑', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '⌫',]),
-                        BuildButtonRow([',', 'Пробел', '.']),
+                        buildButtonRow(['ā', 'ē', 'ё̄', 'ӣ', 'ӈ', 'о̄', 'ӯ', 'ы̄', 'э̄', 'ю̄', 'я̄']),
+                        buildButtonRow(['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ']),
+                        buildButtonRow(['ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э']),
+                        buildButtonRow(['↑', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '⌫',]),
+                        buildButtonRow([',', 'Пробел', '.']),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -353,7 +458,7 @@ class _GameScreenState extends State<GameScreen>
                                 ],
                               ),
                               child: Text(
-                                '1/10',
+                                (currentTaskIndex+1).toString() + '/10',
                                 style: TextStyle(
                                   fontSize: 25,
                                   fontFamily: 'Montserrat',
@@ -373,18 +478,18 @@ class _GameScreenState extends State<GameScreen>
         )
     );
   }
-  Widget BuildButtonRow(List<String> buttons) {
+  Widget buildButtonRow(List<String> buttons) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: buttons.map((button) {
-        return ButtonStyle(button);
+        return buttonStyle(button);
       }).toList(),
     );
   }
 
   bool isCapsLock = false;
 
-  Widget ButtonStyle(String label) {
+  Widget buttonStyle(String label) {
     double valButWidth = 29;
     double valButHeight = 42;
     double borderCircul = 10;
@@ -451,7 +556,7 @@ class _GameScreenState extends State<GameScreen>
   Widget BuildCheckTheAnswer() {
     return GestureDetector(
       onTap: () {
-        setState(() {});
+        checkAnswer(sourceText);
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 2),
@@ -473,7 +578,7 @@ class _GameScreenState extends State<GameScreen>
           ],
         ),
         child: Text(
-          'Проверить',
+          buttonText,
           style: TextStyle(
               fontSize: 25,
               color: Colors.white,
