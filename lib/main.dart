@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:translator/FavoriteWordsScreen.dart';
 import 'package:translator/HomeScreen.dart';
 
 void main() => runApp(MyApp());
