@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:translator/gameScreen.dart';
 import 'main.dart';
 
 class selectTestScreen extends StatefulWidget {

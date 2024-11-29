@@ -80,6 +80,6 @@ flutter:
   fonts:
     - family: Montserrat
       fonts:
-        - asset: src/fonts/Montserrat-Black.ttf
+        - asset: src/fonts/Montserrat-Regular.ttf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

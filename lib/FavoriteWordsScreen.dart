@@ -12,7 +12,7 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
   late VideoPlayerController _controllerVideo;
   List<Map<String, String>> favoriteWords = [
     {'original': 'Привет', 'translated': 'Hello'},
-    {'original': 'Длинное предложение', 'translated': 'A very long sentence that needs to be truncated'},
+    {'original': 'Ооооооооооочень длинное предложение', 'translated': 'A very long sentence that needs to be truncated'},
     {'original': 'Спасибо', 'translated': 'Thank you'},
   ];
   List<bool> isExpandedList = [];
@@ -37,6 +37,15 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
     super.dispose();
   }
 
+  bool _isTextOverflowing(String text, double maxWidth, TextStyle style) {
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: maxWidth);
+    return textPainter.didExceedMaxLines;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,8 +65,7 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
                 title: Text(
                   'Избранное',
                   style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
                     fontFamily: 'Montserrat',
                     color: Colors.white,
                   ),
@@ -70,39 +78,63 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
                       int index = entry.key;
                       String originalWord = entry.value['original']!;
                       String translatedWord = entry.value['translated']!;
-                      return Container(
-                        width: double.infinity,
-                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        child: Card(
-                          margin: EdgeInsets.zero,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  '$originalWord — $translatedWord',
-                                  maxLines: isExpandedList[index] ? null : 1,
-                                  overflow: isExpandedList[index] ? TextOverflow.visible : TextOverflow.ellipsis,
-                                  style: TextStyle(fontSize: 18),
+
+                      return LayoutBuilder(
+                        builder: (context, constraints) {
+                          bool isOriginalOverflowing = _isTextOverflowing(
+                              originalWord, constraints.maxWidth, TextStyle(fontSize: 20, fontFamily: 'Montserrat'));
+                          bool isTranslatedOverflowing = _isTextOverflowing(
+                              translatedWord, constraints.maxWidth, TextStyle(fontSize: 20, fontFamily: 'Montserrat'));
+
+                          return Container(
+                            width: double.infinity,
+                            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                            child: Card(
+                              margin: EdgeInsets.zero,
+                              color: Color.fromRGBO(9, 147, 140, 1),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      originalWord,
+                                      maxLines: isExpandedList[index] ? null : 1,
+                                      overflow: isExpandedList[index] ? TextOverflow.visible : TextOverflow.ellipsis,
+                                      style: TextStyle(fontSize: 20, fontFamily: 'Montserrat', color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      '—',
+                                      style: TextStyle(fontSize: 20, fontFamily: 'Montserrat', color: Colors.white),
+                                    ),
+                                    Text(
+                                      translatedWord,
+                                      maxLines: isExpandedList[index] ? null : 1,
+                                      overflow: isExpandedList[index] ? TextOverflow.visible : TextOverflow.ellipsis,
+                                      style: TextStyle(fontSize: 20, fontFamily: 'Montserrat', color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    if (isOriginalOverflowing || isTranslatedOverflowing)
+                                      IconButton(
+                                        icon: Icon(
+                                          isExpandedList[index] ? Icons.expand_less : Icons.expand_more,
+                                        ),
+                                        color: Colors.white,
+                                        onPressed: () {
+                                          setState(() {
+                                            isExpandedList[index] = !isExpandedList[index];
+                                          });
+                                        },
+                                      ),
+                                  ],
                                 ),
-                                IconButton(
-                                  icon: Icon(
-                                    isExpandedList[index] ? Icons.expand_less : Icons.expand_more,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      isExpandedList[index] = !isExpandedList[index];
-                                    });
-                                  },
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       );
-
-
                     }).toList(),
                   ),
                 ),
