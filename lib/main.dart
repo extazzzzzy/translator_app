@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:translator/GamingScreen.dart';
+import 'package:translator/HomeScreen.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: GameScreen(),
+      home: HomeScreen(),
     );
   }
 }

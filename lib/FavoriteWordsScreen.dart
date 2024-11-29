@@ -55,12 +55,9 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: _isVideoInitialized
+            child: _controllerVideo.value.isInitialized
                 ? VideoPlayer(_controllerVideo)
-                : Image.asset(
-              "src/design/material/background_load.png",
-              fit: BoxFit.cover,
-            ),
+                : Center(child: CircularProgressIndicator()),
           ),
           Column(
             children: [
