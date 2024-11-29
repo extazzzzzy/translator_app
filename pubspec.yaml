@@ -36,6 +36,7 @@ dependencies:
   http: ^1.2.2
   excel: ^2.0.0
   path_provider: ^2.0.10
+  shared_preferences: ^2.3.2
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +59,7 @@ flutter:
     - src/translation_db/phrases.xlsx
     - src/translation_db/words.xlsx
     - src/design/material/background2.mp4
+    - src/design/material/background_load.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

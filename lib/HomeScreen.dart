@@ -4,6 +4,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:translator/FavoriteWordsScreen.dart';
 import 'package:video_player/video_player.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,8 +18,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   late AnimationController _controllerAnimation;
   late Animation<double> _rotationAnimation;
   bool _isTextVisible = true;
-
   bool isTranslating = false;
+  bool _isVideoInitialized = false;
 
   @override
   void initState() {
@@ -30,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           _controllerVideo.play();
         });
       });
+    _isVideoInitialized = true;
 
     _controllerAnimation = AnimationController(
       vsync: this,
@@ -55,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   String targetLanguage = 'mancy_Cyrl';
   String sourceLanguageText = 'Русский';
   String targetLanguageText = 'Мансийский';
-  String sourceText = 'Aaaaaaaaaaaaaadasdasjndajsklnalksjdnaskldjnasdjklndjkndnnwqidnasdfnsvkdjgbnsdklfgbsklfnasdkjfnsdjgfnjklsdngkjldfngjkldfngjndfjkgndfjkgnkdfasndkasnjdkosanjkdnasjpfsdfkgndfg';
+  String sourceText = '';
   String targetText = '';
 
   void changeLanguage() {
@@ -156,15 +159,30 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     }
   }
 
+  void saveFavoriteInCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> favoriteWords = prefs.getStringList('favoriteWords') ?? [];
+
+    if (!favoriteWords.contains(sourceText) && !favoriteWords.contains(targetText) && sourceText.isNotEmpty && targetText.isNotEmpty) {
+      favoriteWords.add(sourceText);
+      favoriteWords.add(targetText);
+
+      await prefs.setStringList('favoriteWords', favoriteWords);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
           Positioned.fill(
-            child: _controllerVideo.value.isInitialized
+            child: _isVideoInitialized
                 ? VideoPlayer(_controllerVideo)
-                : Center(child: CircularProgressIndicator()),
+                : Image.asset(
+              "src/design/material/background_load.png",
+              fit: BoxFit.cover,
+            ),
           ),
           Column(
             children: [
@@ -176,9 +194,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
-                      onPressed: (){},
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => FavoriteWordsScreen()),
+                        );
+                      },
                       icon: Icon(
-                        Icons.class_rounded,
+                        Icons.collections_bookmark,
                         color: Colors.white,
                       ),
                     ),
@@ -304,11 +327,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         child: Stack(
                           children: [
                             Padding(
-                              padding: EdgeInsets.fromLTRB(10, 18, 10, 18),
+                              padding: EdgeInsets.fromLTRB(10, 10, 10, 40),
                               child: SingleChildScrollView(
                                 child: ConstrainedBox(
                                   constraints: BoxConstraints(
-                                    maxWidth: 300,
+                                    maxWidth: 335,
                                   ),
                                   child: AnimatedOpacity(
                                     opacity: _isTextVisible ? 1.0 : 0.0,
@@ -326,8 +349,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                             ),
                             Positioned(
-                              top: 10,
-                              right: 10,
+                              top: 0,
+                              right: 0,
                               child: IconButton(
                                 onPressed: isTranslating
                                     ? null
@@ -348,20 +371,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                             ),
                             Positioned(
-                              top: 0,
                               bottom: 0,
-                              right: 10,
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: IconButton(
-                                  onPressed: () {},
-                                  icon: Icon(Icons.add, color: Colors.white),
-                                ),
+                              right: 30,
+                              child: IconButton(
+                                onPressed: () {
+                                  saveFavoriteInCache();
+                                },
+                                icon: Icon(Icons.library_add, color: Colors.white),
                               ),
                             ),
                             Positioned(
-                              bottom: 10,
-                              right: 10,
+                              bottom: 0,
+                              right: 0,
                               child: IconButton(
                                 onPressed: () {
                                   copyText('source');
@@ -395,11 +416,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         child: Stack(
                           children: [
                             Padding(
-                              padding: EdgeInsets.fromLTRB(10, 18, 10, 18),
+                              padding: EdgeInsets.fromLTRB(10, 10, 10, 40),
                               child: SingleChildScrollView(
                                 child: ConstrainedBox(
                                   constraints: BoxConstraints(
-                                    maxWidth: 300,
+                                    maxWidth: 340,
                                   ),
                                   child: AnimatedOpacity(
                                     opacity: _isTextVisible ? 1.0 : 0.0,
@@ -417,8 +438,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                             ),
                             Positioned(
-                              bottom: 8,
-                              right: 8,
+                              bottom: 0,
+                              right: 0,
                               child: IconButton(
                                 onPressed: () {
                                   copyText('target');

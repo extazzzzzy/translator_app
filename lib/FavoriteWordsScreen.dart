@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:translator/HomeScreen.dart';
 import 'package:video_player/video_player.dart';
 
 class FavoriteWordsScreen extends StatefulWidget {
@@ -10,25 +10,28 @@ class FavoriteWordsScreen extends StatefulWidget {
 
 class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
   late VideoPlayerController _controllerVideo;
-  List<Map<String, String>> favoriteWords = [
-    {'original': 'Привет', 'translated': 'Hello'},
-    {'original': 'Ооооооооооочень длинное предложение', 'translated': 'A very long sentence that needs to be truncated'},
-    {'original': 'Спасибо', 'translated': 'Thank you'},
-  ];
+  bool _isVideoInitialized = false;
   List<bool> isExpandedList = [];
+  List<String> favoriteWords = [];
+  void loadFavoriteWords() async {
+    final prefs = await SharedPreferences.getInstance();
+    favoriteWords = prefs.getStringList('favoriteWords') ?? [];
+  }
 
   @override
   void initState() {
     super.initState();
+    loadFavoriteWords();
     _controllerVideo = VideoPlayerController.asset("src/design/material/background2.mp4")
       ..initialize().then((_) {
         setState(() {
           _controllerVideo.setLooping(true);
           _controllerVideo.setVolume(0);
           _controllerVideo.play();
-          isExpandedList = List.generate(favoriteWords.length, (_) => false);
+          isExpandedList = List.generate(favoriteWords.length ~/ 2, (_) => false);
         });
       });
+    _isVideoInitialized = true;
   }
 
   @override
@@ -52,16 +55,29 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: _controllerVideo.value.isInitialized
+            child: _isVideoInitialized
                 ? VideoPlayer(_controllerVideo)
-                : Center(child: CircularProgressIndicator()),
+                : Image.asset(
+              "src/design/material/background_load.png",
+              fit: BoxFit.cover,
+            ),
           ),
           Column(
             children: [
               AppBar(
                 backgroundColor: Colors.transparent,
                 elevation: 0,
+                iconTheme: IconThemeData(color: Colors.white),
                 centerTitle: true,
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                    );
+                  },
+                ),
                 title: Text(
                   'Избранное',
                   style: TextStyle(
@@ -71,13 +87,13 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
                   ),
                 ),
               ),
+
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
-                    children: favoriteWords.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      String originalWord = entry.value['original']!;
-                      String translatedWord = entry.value['translated']!;
+                    children: List.generate(favoriteWords.length ~/ 2, (index) {
+                      String originalWord = favoriteWords[index * 2];
+                      String translatedWord = favoriteWords[index * 2 + 1];
 
                       return LayoutBuilder(
                         builder: (context, constraints) {
@@ -135,7 +151,7 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
                           );
                         },
                       );
-                    }).toList(),
+                    }),
                   ),
                 ),
               ),
