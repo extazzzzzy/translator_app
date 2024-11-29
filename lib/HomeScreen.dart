@@ -152,30 +152,33 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               AppBar(
                 backgroundColor: Colors.transparent,
                 elevation: 0,
-                title: null,
-                flexibleSpace: Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.only(top: 5, bottom: 5),
-                  decoration: BoxDecoration(
-                    color: Color.fromRGBO(37, 49, 73, 0.6),
-                    //borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        spreadRadius: 3,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
+                centerTitle: true,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: (){},
+                      icon: Icon(
+                        Icons.class_rounded,
+                        color: Colors.white,
                       ),
-                    ],
-                  ),
-                  child: Text(
-                    'Translator',
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
                     ),
-                  ),
+                    Text(
+                      'Translator',
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: (){},
+                      icon: Icon(
+                        Icons.settings,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Expanded(
@@ -267,10 +270,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         width: 390,
                         margin: EdgeInsets.only(top: 15, right: 10, left: 10),
                         decoration: BoxDecoration(
-                          color: Color.fromRGBO(77, 91, 129, 0.45),
+                          color: Color.fromRGBO(9, 147, 140, 0.45),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                              color: Color.fromRGBO(40, 62, 117, 0.45),
+                              color: Color.fromRGBO(8, 133, 126, 0.45),
                               width: 3.5
                           ),
                           boxShadow: [
@@ -344,10 +347,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         width: 390,
                         margin: EdgeInsets.only(top: 15, right: 10, left: 10),
                         decoration: BoxDecoration(
-                          color: Color.fromRGBO(37, 49, 73, 0.6),
+                          color: Color.fromRGBO(4, 61, 58, 0.6),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                              color: Color.fromRGBO(35, 47, 74, 0.6),
+                              color: Color.fromRGBO(4, 80, 76, 0.6),
                               width: 3.5
                           ),
                           boxShadow: [
@@ -394,36 +397,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           ],
                         ),
                       ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(10,18,10,0),
-                        decoration: BoxDecoration(
-                          color: Color.fromRGBO(16, 216, 49, 0.8),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              spreadRadius: 3,
-                              blurRadius: 5,
-                              offset: Offset(0, 3)
-                          ),],
-                        ),
-                        child: TextButton(
-                          onPressed: isTranslating
-                              ? null
-                              : () {
-                            setState(() {
-                              translateText();
-                            });
-                          },
-                          child: Text(
-                            'Перевести',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                      ),
-                      BuildButtonRow(['ā', 'ē', 'ё̄', '̄ӣ', 'ӈ', 'о̄', 'ӯ', 'ы̄', 'э̄', 'ю̄', 'я̄']),
+                      Container(margin: EdgeInsets.symmetric(vertical: 2),),
+                      BuildButtonRow(['ā', 'ē', 'ё̄', 'ӣ', 'ӈ', 'о̄', 'ӯ', 'ы̄', 'э̄', 'ю̄', 'я̄']),
                       BuildButtonRow(['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ']),
                       BuildButtonRow(['ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э']),
                       BuildButtonRow(['↑', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '',]),
@@ -440,7 +415,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
   Widget BuildButtonRow(List<String> buttons) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: buttons.map((button) {
         return ButtonStyle(button);
       }).toList(),
@@ -448,33 +423,54 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   Widget ButtonStyle(String label) {
-    double valButWidth = 45;
-    double valButHeight = 65;
+    double valButWidth = 29;
+    double valButHeight = 42;
+    double borderCircul = 10;
+    double margVert = 3;
+    double margHoris = 3;
     if (label == 'Пробел') {
-      valButWidth = 140;
-      valButHeight = 90;
+      valButWidth = 120;
+      valButHeight = 35;
+      label = '';
+      borderCircul = 30;
+    }
+    if (['ā','ē','ё̄','ӣ','ӈ','о̄','ӯ','ы̄','э̄','ю̄','я̄'].contains(label)) {
+      margHoris = 3;
+      margVert = 7;
+    }
+    else if (['й','ц','у','к','е','н','г','ш','щ','з','х','ъ'].contains(label)) {
+      margHoris = 2;
+      margVert = 3;
+    }
+    else if (['ф','ы','в','а','п','р','о','л','д','ж','э'].contains(label)) {
+      margHoris = 3;
+      margVert = 3;
+    }
+    else if (['↑','я','ч','с','м','и','т','ь','б','ю','',].contains(label)) {
+      margHoris = 2;
+      margVert = 3;
     }
     return GestureDetector(
       onTap: () {
         //Сюда функцию для ввода строки
       },
       child: Container(
-        margin: EdgeInsets.all(8),
+        margin: EdgeInsets.symmetric(horizontal: margHoris, vertical: margVert),
         width: valButWidth,
         height: valButHeight,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Color.fromRGBO(60, 70, 101, 0.60),
-          borderRadius: BorderRadius.circular(10),
+          color: Color.fromRGBO(7, 96, 90, 0.45),
+          borderRadius: BorderRadius.circular(borderCircul),
           border: Border.all(
-              color: Color.fromRGBO(53, 63, 90, 0.85),
+              color: Color.fromRGBO(7, 96, 90, 0.45),
               width: 3.5
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 35,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
