@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
@@ -19,7 +20,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   late Animation<double> _rotationAnimation;
   bool _isTextVisible = true;
   bool isTranslating = false;
-  bool _isVideoInitialized = false;
 
   @override
   void initState() {
@@ -32,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           _controllerVideo.play();
         });
       });
-    _isVideoInitialized = true;
 
     _controllerAnimation = AnimationController(
       vsync: this,
@@ -171,15 +170,43 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     }
   }
 
+  double _fontSize = 0;
+  double _valButWidth = 0;
+  double _valButHeight = 0;
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    if (screenWidth < 425) {
+      _fontSize = 18;
+      _valButWidth = 24;
+      _valButHeight = 37;
+    }
+    else {
+      _fontSize = 20;
+      _valButWidth = 28;
+      _valButHeight = 41;
+    }
+
     return Scaffold(
       body: Stack(
         children: [
           Positioned.fill(
             child: _controllerVideo.value.isInitialized
                 ? VideoPlayer(_controllerVideo)
-                : Center(child: CircularProgressIndicator()),
+                : Stack(
+              children: [
+                Positioned.fill(
+                  child: Image.asset(
+                    'src/design/material/background_load.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Center(
+                  child: CircularProgressIndicator(color: Colors.white,),
+                ),
+              ],
+            ),
           ),
           Column(
             children: [
@@ -205,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     Text(
                       'Мансийский \n переводчик',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 22,
                         fontFamily: 'Montserrat',
                         color: Colors.white,
                       ),
@@ -239,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                     child: Text(
                                       sourceLanguageText,
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: _fontSize,
                                         color: Colors.white,
                                           fontFamily: 'Montserrat',
                                       ),
@@ -288,7 +315,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                     child: Text(
                                       targetLanguageText,
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: _fontSize,
                                         color: Colors.white,
                                         fontFamily: 'Montserrat',
                                       ),
@@ -336,7 +363,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                     child: Text(
                                       sourceText.isEmpty ? 'Введите текст' : sourceText,
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: _fontSize,
                                         fontFamily: 'Montserrat',
                                         color: Colors.white,
                                       ),
@@ -425,7 +452,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                     child: Text(
                                       targetText.isEmpty ? 'Перевод' : targetText,
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: _fontSize,
                                         fontFamily: 'Montserrat',
                                         color: Colors.white,
                                       ),
@@ -452,7 +479,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       BuildButtonRow(['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ']),
                       BuildButtonRow(['ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э']),
                       BuildButtonRow(['↑', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '⌫',]),
-                      BuildButtonRow([',', 'Пробел', '.']),
+                      BuildButtonRow(['!', ',', 'Пробел', '.', '?']),
                     ],
                   ),
                 ),
@@ -476,8 +503,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Timer? _debounceTimer;
 
   Widget ButtonStyle(String label) {
-    double valButWidth = 29;
-    double valButHeight = 42;
+    double valButWidth = _valButWidth;
+    double valButHeight = _valButHeight;
     double borderCircul = 10;
     double margVert = 3;
     double margHoris = 3;
@@ -534,7 +561,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         child: Text(
           isCapsLock ? label.toUpperCase() : label,
           style: TextStyle(
-            fontSize: 20,
+            fontSize: _fontSize,
             fontFamily: 'Montserrat',
             color: Colors.white,
           ),

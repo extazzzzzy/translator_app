@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:translator/HomeScreen.dart';
@@ -57,7 +58,19 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
           Positioned.fill(
             child: _controllerVideo.value.isInitialized
                 ? VideoPlayer(_controllerVideo)
-                : Center(child: CircularProgressIndicator()),
+                : Stack(
+              children: [
+                Positioned.fill(
+                  child: Image.asset(
+                    'src/design/material/background_load.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Center(
+                  child: CircularProgressIndicator(color: Colors.white,),
+                ),
+              ],
+            ),
           ),
           Column(
             children: [
