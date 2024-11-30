@@ -9,16 +9,18 @@ import 'package:video_player/video_player.dart';
 
 class GamingScreen extends StatefulWidget
 {
-  const GamingScreen({super.key, required difficulty, required sourceLanguage, required targetLanguage});
-
+  const GamingScreen({super.key, required this.difficulty, required  this.sourceLanguage, required  this.targetLanguage});
+  
+  final String difficulty;
+  final String sourceLanguage;
+  final String targetLanguage;
 
   @override
   State<GamingScreen> createState() => _GamingScreenState();
 }
 
-class _GamingScreenState extends State<GamingScreen>
+class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderStateMixin 
 {
-  String defaultSheetName = "words";
   List<Map<String, String>> pairs = [];
   int rightAnswersCount = 0;
   int taskCount = 10;
@@ -30,8 +32,6 @@ class _GamingScreenState extends State<GamingScreen>
   int isAnswerTrue = 0; //для смены цвета по ответу
   String buttonText = "Проверить";
 
-  String sourceLanguage = "Мансийский";
-  String targetLanguage = "Русский";
   String question = "";
   String answer = "Привет! Давай поиграем!";
 
@@ -48,10 +48,10 @@ class _GamingScreenState extends State<GamingScreen>
 
       var excel = exel.Excel.decodeBytes(bytes);
 
-      var sheet = excel.tables[defaultSheetName];
+      var sheet = excel.tables[widget.difficulty];
       if (sheet == null)
       {
-        throw Exception("Лист '$defaultSheetName' не найден!");
+        throw Exception("Лист '${widget.difficulty}' не найден!");
       }
 
       List<int> indexes = [];
@@ -83,8 +83,8 @@ class _GamingScreenState extends State<GamingScreen>
         rightAnswersCount = 0;
         currentTaskIndex = 0;
         timer = 0;
-        question = pairs[currentTaskIndex][sourceLanguage]!;
-        sourceText = pairs[currentTaskIndex][targetLanguage]!;
+        question = pairs[currentTaskIndex][widget.sourceLanguage]!;
+        sourceText = pairs[currentTaskIndex][widget.targetLanguage]!;
         isAnswerTrue = 0;
       });
 
@@ -110,15 +110,17 @@ class _GamingScreenState extends State<GamingScreen>
       isAnswerTrue = 0;
       if (!isAnswerShowing)
       {
-        clearText();
-        var correctAnswer = pairs[currentTaskIndex][targetLanguage];
-        currentTaskIndex++;
+        var correctAnswer = pairs[currentTaskIndex][widget.targetLanguage];
 
         if (currentTaskIndex >= pairs.length)
         {
           if (buttonText == "Вернуться")
           {
-            // ПЕРЕХОД НА ДРУГУЮ СТРАНИЦУ
+            Navigator.pushReplacement
+            (
+              context,
+              MaterialPageRoute(builder: (context) => selectTestScreen()),
+            );
           }
           else
           {
@@ -127,14 +129,11 @@ class _GamingScreenState extends State<GamingScreen>
             buttonText = "Вернуться";
             question = "Выполнено верно: $rightAnswersCount/10";
             answer = "Время: ${timer ~/ 60} мин ${timer % 60} сек";
-            currentTaskIndex--;
           }
         }
         else
         {
-          question = pairs[currentTaskIndex][sourceLanguage]!;
-          answer = "Правильный ответ: " + pairs[currentTaskIndex-1][targetLanguage]!;
-          sourceText = pairs[currentTaskIndex][targetLanguage]!; // ЧИТ НА ОТВЕТ
+          answer = "Правильный ответ: " + pairs[currentTaskIndex][widget.targetLanguage]!;
         }
 
         if (userAnswer.trim().toLowerCase() == correctAnswer?.trim().toLowerCase())
@@ -154,6 +153,10 @@ class _GamingScreenState extends State<GamingScreen>
       }
       else
       {
+        clearText();
+        sourceText = pairs[currentTaskIndex+1][widget.targetLanguage]!; // ЧИТ НА ОТВЕТ
+        currentTaskIndex++;
+        question = pairs[currentTaskIndex][widget.sourceLanguage]!;
         isAnswerShowing = false;
         buttonText = "Проверить";
       }
@@ -171,6 +174,11 @@ class _GamingScreenState extends State<GamingScreen>
   void initState()
   {
     super.initState();
+    _controllerAnimation = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    );
+
     _controllerVideo = VideoPlayerController.asset("src/design/material/background2.mp4")
       ..initialize().then((_) {
         setState(() {
@@ -284,7 +292,7 @@ class _GamingScreenState extends State<GamingScreen>
                               child: Row(
                                   children: [
                                     Container(
-                                      margin: EdgeInsets.only(right: 15, left: 15, top: 95),
+                                      margin: EdgeInsets.only(right: 15, left: 15, top: 110),
                                       child: Image.asset(
                                         "src/img/" + girlFaceName + ".png",
                                         height: 180,
