@@ -219,10 +219,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    if (screenWidth < 425) {
+    if (screenWidth < 450) {
       _fontSize = 18;
-      _valButWidth = 24;
-      _valButHeight = 37;
+      _valButWidth = 26;
+      _valButHeight = 39;
     }
     else {
       _fontSize = 20;
@@ -613,7 +613,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         height: valButHeight,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Color.fromRGBO(7, 96, 90, 0.45),
+          color: Color.fromRGBO(7, 96, 90, 0.8),
           borderRadius: BorderRadius.circular(borderCircul),
           border: Border.all(
               color: Color.fromRGBO(7, 96, 90, 0.45),
