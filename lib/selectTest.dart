@@ -21,7 +21,6 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
   late Animation<double> _rotationAnimation;
   bool _isTextVisible = true;
   bool isTranslating = false;
-  bool _isVideoInitialized = false;
 
   String sourceLanguageText = 'Русский';
   String targetLanguageText = 'Мансийский';
@@ -33,6 +32,14 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
       vsync: this,
       duration: Duration(seconds: 1),
     );
+
+    _rotationAnimation = Tween<double>(begin: 0, end: 2 * 3.14159265359).animate(
+      CurvedAnimation(
+        parent: _controllerAnimation,
+        curve: Curves.easeOut,
+      ),
+    );
+
     _controllerVideo = VideoPlayerController.asset("src/design/material/background2.mp4")
       ..initialize().then((_) {
         setState(() {
@@ -41,7 +48,6 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
           _controllerVideo.play();
         });
       });
-    _isVideoInitialized = true;
   }
 
   @override
@@ -49,6 +55,28 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
     _controllerVideo.dispose();
     _controllerAnimation.dispose();
     super.dispose();
+  }
+
+  void _updateTextVisibility() {
+    setState(() {
+      _isTextVisible = false;
+    });
+    Future.delayed(Duration(milliseconds: 500), () {
+      setState(() {
+        _isTextVisible = true;
+      });
+    });
+  }
+
+  void changeLanguage() {
+    if (sourceLanguageText == 'Русский') {
+      sourceLanguageText = 'Мансийский';
+      targetLanguageText = 'Русский';
+    }
+    else {
+      sourceLanguageText = 'Русский';
+      targetLanguageText = 'Мансийский';
+    }
   }
 
   @override
@@ -59,7 +87,19 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
             Positioned.fill(
               child: _controllerVideo.value.isInitialized
                   ? VideoPlayer(_controllerVideo)
-                  : Center(child: CircularProgressIndicator()),
+                  : Stack(
+                children: [
+                  Positioned.fill(
+                    child: Image.asset(
+                      'src/design/material/background_load.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Center(
+                    child: CircularProgressIndicator(color: Colors.white,),
+                  ),
+                ],
+              ),
             ),
             Column(
               children: [
@@ -67,44 +107,29 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
                   backgroundColor: Colors.transparent,
                   elevation: 0,
                   centerTitle: true,
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => HomeScreen()),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        'Мансийский \n переводчик',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontFamily: 'Montserrat',
-                          color: Colors.white,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: (){
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => FavoriteWordsScreen()),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.collections_bookmark,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+                  leading: IconButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                    ),
+                  ),
+                  title: Text(
+                    'Выбор \n задания',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontFamily: 'Montserrat',
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
+
                 Container(
                   margin: EdgeInsets.only(top: 20, left: 10, right: 10),
                   child: Row(
@@ -118,7 +143,7 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
                               opacity: _isTextVisible ? 1.0 : 0.0,
                               duration: Duration(milliseconds: 300),
                               child: Text(
-                                'var1',
+                                sourceLanguageText,
                                 style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -131,20 +156,31 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
                       ),
                       Padding(
                         padding: EdgeInsets.only(right: 5.0),
-                        child: IconButton(
-                          onPressed: isTranslating
-                              ? null
-                              : () {
-                            setState(() {
-                              Future.delayed(Duration(milliseconds: 500), () {
-                                setState(() {});
-                              });
-                              _controllerAnimation.forward(from: 0);
-                            });
+                        child: AnimatedBuilder(
+                          animation: _rotationAnimation,
+                          builder: (context, child) {
+                            return Transform.rotate(
+                              angle: _rotationAnimation.value,
+                              child: IconButton(
+                                onPressed: isTranslating
+                                    ? null
+                                    : () {
+                                  setState(() {
+                                    _updateTextVisibility();
+                                    Future.delayed(Duration(milliseconds: 500), () {
+                                      setState(() {
+                                        changeLanguage();
+                                      });
+                                    });
+                                    _controllerAnimation.forward(from: 0);
+                                  });
+                                },
+                                color: Colors.white,
+                                icon: Icon(Icons.compare_arrows_rounded),
+                                iconSize: 40,
+                              ),
+                            );
                           },
-                          color: Colors.white,
-                          icon: Icon(Icons.compare_arrows_rounded),
-                          iconSize: 40,
                         ),
                       ),
                       Expanded(
@@ -155,7 +191,7 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
                               opacity: _isTextVisible ? 1.0 : 0.0,
                               duration: Duration(milliseconds: 300),
                               child: Text(
-                                'var2',
+                                targetLanguageText,
                                 style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.white,

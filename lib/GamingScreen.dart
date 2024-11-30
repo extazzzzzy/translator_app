@@ -9,7 +9,7 @@ import 'package:video_player/video_player.dart';
 
 class GamingScreen extends StatefulWidget
 {
-  const GamingScreen({super.key, required sourceLanguage, required targetLanguage});
+  const GamingScreen({super.key, required difficulty, required sourceLanguage, required targetLanguage});
 
   @override
   State<GamingScreen> createState() => _GamingScreenState();
