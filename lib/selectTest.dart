@@ -79,8 +79,16 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
     }
   }
 
+  double _fontSize = 0;
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth < 425) {
+      _fontSize = 18;
+    }
+    else {
+      _fontSize = 20;
+    }
     return Scaffold(
         body: Stack(
           children: [
@@ -145,7 +153,7 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
                               child: Text(
                                 sourceLanguageText,
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: _fontSize,
                                   color: Colors.white,
                                   fontFamily: 'Montserrat',
                                 ),
@@ -193,7 +201,7 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
                               child: Text(
                                 targetLanguageText,
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: _fontSize,
                                   color: Colors.white,
                                   fontFamily: 'Montserrat',
                                 ),
@@ -316,7 +324,7 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
                 child: Text(
                   'Начать тест',
                   style: TextStyle(
-                      fontSize: 20,
+                      fontSize: _fontSize,
                       color: Colors.white,
                       fontFamily: 'Montserrat'
                   ),
