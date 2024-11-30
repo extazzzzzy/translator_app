@@ -41,11 +41,25 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
   String girlFaceName = "glad";
   String newGirlFaceName = "";
 
-  void saveGameData(int rightAnswersCount, int time) async
+  void saveGameData(int rightAnswersCount, int time, String difficulty) async
   {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setInt('rightAnswersCount', rightAnswersCount);
-    prefs.setInt('time', time);
+
+    if (difficulty == "words")
+    {
+      prefs.setInt('lastRightAnswerCountWords', rightAnswersCount);
+      prefs.setInt('lastTimeWords', time);
+    }
+    else if (difficulty == "phrases")
+    {
+      prefs.setInt('lastRightAnswerCountPhrases', rightAnswersCount);
+      prefs.setInt('lastTimePhrases', time);
+    }
+    else
+    {
+      prefs.setInt('lastRightAnswerCountSentences', rightAnswersCount);
+      prefs.setInt('lastTimeSentences', time);
+    }
   }
 
   Future<void> pickRandomRows(int count) async
@@ -118,7 +132,7 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
     {
       if (buttonText == "Вернуться")
       {
-        saveGameData(rightAnswersCount, timer);
+        saveGameData(rightAnswersCount, timer, widget.difficulty);
         Navigator.pushReplacement
         (
           context,

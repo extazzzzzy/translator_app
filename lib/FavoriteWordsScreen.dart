@@ -9,12 +9,14 @@ class FavoriteWordsScreen extends StatefulWidget {
   _FavoriteWordsScreenState createState() => _FavoriteWordsScreenState();
 }
 
-class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
+class _FavoriteWordsScreenState extends State<FavoriteWordsScreen>
+{
   late VideoPlayerController _controllerVideo;
   bool _isVideoInitialized = false;
   List<bool> isExpandedList = [];
   List<String> favoriteWords = [];
-  void loadFavoriteWords() async {
+  void loadFavoriteWords() async
+  {
     final prefs = await SharedPreferences.getInstance();
     favoriteWords = prefs.getStringList('favoriteWords') ?? [];
   }
