@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:translator/FavoriteWordsScreen.dart';
+import 'package:translator/selectTest.dart';
 import 'package:video_player/video_player.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -238,9 +239,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       ),
                     ),
                     IconButton(
-                      onPressed: (){},
+                      onPressed: (){
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => selectTestScreen()),
+                        );
+                      },
                       icon: Icon(
-                        Icons.settings,
+                        Icons.ac_unit,
                         color: Colors.white,
                       ),
                     ),

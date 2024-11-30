@@ -2,6 +2,8 @@ import 'dart:math';
 import 'package:excel/excel.dart' as exel;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:translator/HomeScreen.dart';
+import 'package:translator/selectTest.dart';
 import 'dart:async';
 import 'package:video_player/video_player.dart';
 
@@ -232,9 +234,14 @@ class _GamingScreenState extends State<GamingScreen>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
-                        onPressed: (){},
+                        onPressed: (){
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => selectTestScreen()),
+                          );
+                        },
                         icon: Icon(
-                          Icons.class_rounded,
+                          Icons.arrow_back,
                           color: Colors.white,
                         ),
                       ),
@@ -248,9 +255,14 @@ class _GamingScreenState extends State<GamingScreen>
                         ),
                       ),
                       IconButton(
-                        onPressed: (){},
+                        onPressed: (){
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomeScreen()),
+                          );
+                        },
                         icon: Icon(
-                          Icons.ac_unit,
+                          Icons.home,
                           color: Colors.white,
                         ),
                       ),
