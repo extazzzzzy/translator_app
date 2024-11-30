@@ -15,7 +15,7 @@ class selectTestScreen extends StatefulWidget {
   selectTest createState() => selectTest();
 }
 
-class selectTest extends State<selectTestScreen> {
+class selectTest extends State<selectTestScreen>  with SingleTickerProviderStateMixin {
   late VideoPlayerController _controllerVideo;
   late AnimationController _controllerAnimation;
   late Animation<double> _rotationAnimation;
@@ -23,9 +23,16 @@ class selectTest extends State<selectTestScreen> {
   bool isTranslating = false;
   bool _isVideoInitialized = false;
 
+  String sourceLanguageText = 'Русский';
+  String targetLanguageText = 'Мансийский';
+
   @override
   void initState() {
     super.initState();
+    _controllerAnimation = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    );
     _controllerVideo = VideoPlayerController.asset("src/design/material/background2.mp4")
       ..initialize().then((_) {
         setState(() {
@@ -166,9 +173,9 @@ class selectTest extends State<selectTestScreen> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          BuildGamingMod('Перевод слова'),
-                          BuildGamingMod('Перевод фразы'),
-                          BuildGamingMod('Перевод предложения'),
+                          BuildGamingMod('Перевод слова', "words"),
+                          BuildGamingMod('Перевод фразы', "phrases"),
+                          BuildGamingMod('Перевод предложения', "sentences"),
                         ],
                       ),
                     )
@@ -179,7 +186,7 @@ class selectTest extends State<selectTestScreen> {
         )
     );
   }
-  Widget BuildGamingMod(String label) {
+  Widget BuildGamingMod(String label, String difficulty) {
     return Container(
       alignment: Alignment.center,
       margin: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
@@ -248,7 +255,7 @@ class selectTest extends State<selectTestScreen> {
               onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => GamingScreen()),
+                  MaterialPageRoute(builder: (context) => GamingScreen(difficulty: difficulty, sourceLanguage: sourceLanguageText, targetLanguage: targetLanguageText,)),
                 );
               },
               child: Container(

@@ -9,7 +9,7 @@ import 'package:video_player/video_player.dart';
 
 class GamingScreen extends StatefulWidget
 {
-  const GamingScreen({super.key});
+  const GamingScreen({super.key, required sourceLanguage, required targetLanguage});
 
   @override
   State<GamingScreen> createState() => _GamingScreenState();
@@ -114,7 +114,11 @@ class _GamingScreenState extends State<GamingScreen>
         {
           if (buttonText == "Вернуться")
           {
-            // ПЕРЕХОД НА ДРУГУЮ СТРАНИЦУ
+            Navigator.pushReplacement
+            (
+              context,
+              MaterialPageRoute(builder: (context) => selectTestScreen()),
+            );
           }
           else
           {
