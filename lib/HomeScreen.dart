@@ -170,6 +170,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       await prefs.setStringList('favoriteWords', favoriteWords);
     }
   }
+  
+  void pasteText() async{
+    ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
+    if (data != null && data.text != null && data.text!.isNotEmpty) {
+      sourceText += data.text!;
+    }
+    else {
+      sourceText = '';
+    }
+  }
 
   double _fontSize = 0;
   double _valButWidth = 0;
@@ -226,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         );
                       },
                       icon: Icon(
-                        Icons.collections_bookmark,
+                        Icons.bookmark_rounded,
                         color: Colors.white,
                       ),
                     ),
@@ -401,12 +411,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             ),
                             Positioned(
                               bottom: 0,
-                              right: 30,
+                              right: 60,
                               child: IconButton(
                                 onPressed: () {
                                   saveFavoriteInCache();
                                 },
                                 icon: Icon(Icons.library_add, color: Colors.white),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 30,
+                              child: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    pasteText();
+                                  });
+                                },
+                                icon: Icon(Icons.content_paste_go_rounded, color: Colors.white),
                               ),
                             ),
                             Positioned(
@@ -480,7 +502,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         ),
                       ),
                       Container(margin: EdgeInsets.symmetric(vertical: 2),),
-                      BuildButtonRow(['ā', 'ē', 'ё̄', 'ӣ', 'ӈ', 'о̄', 'ӯ', 'ы̄', 'э̄', 'ю̄', 'я̄']),
+                      if (sourceLanguageText == 'Мансийский') BuildButtonRow(['ā', 'ē', 'ё̄', 'ӣ', 'ӈ', 'о̄', 'ӯ', 'ы̄', 'э̄', 'ю̄', 'я̄']),
                       BuildButtonRow(['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ']),
                       BuildButtonRow(['ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э']),
                       BuildButtonRow(['↑', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '⌫',]),
@@ -520,6 +542,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       borderCircul = 30;
       margVert = 8;
     }
+    else if (label == '⌫') {
+      valButWidth += 3;
+    }
     if (['ā','ē','ё̄','ӣ','ӈ','о̄','ӯ','ы̄','э̄','ю̄','я̄'].contains(label)) {
       margHoris = 3;
       margVert = 7;
@@ -541,7 +566,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         setState(() {
           if (label == '↑') {
             isCapsLock = !isCapsLock;
-          } else {
+          }
+          else if (label != '⌫') {
             editSourceText(label);
             _debounceTimer?.cancel();
             _debounceTimer = Timer(Duration(seconds: 1), () {
