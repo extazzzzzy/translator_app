@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
     _controllerAnimation = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: Duration(milliseconds: 1000),
     );
 
     _rotationAnimation = Tween<double>(begin: 0, end: 2 * 3.14159265359).animate(
@@ -88,14 +89,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   void clearText() {
     sourceText = '';
     targetText = '';
-  }
-
-  void copyText(String sourceOrTargetText) {
-    if (sourceOrTargetText == 'source') {
-      Clipboard.setData(ClipboardData(text: sourceText));
-    } else {
-      Clipboard.setData(ClipboardData(text: targetText));
-    }
   }
 
   void _updateTextVisibility() {
@@ -168,7 +161,45 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       favoriteWords.add(targetText);
 
       await prefs.setStringList('favoriteWords', favoriteWords);
+      Fluttertoast.showToast(
+        msg: 'Слово/фраза добавлена в избранное',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
+
+    else {
+      Fluttertoast.showToast(
+        msg: 'Заполните текстовое поле',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+
+  }
+
+  void copyText(String sourceOrTargetText) {
+    if (sourceOrTargetText == 'source') {
+      Clipboard.setData(ClipboardData(text: sourceText));
+    }
+    else {
+      Clipboard.setData(ClipboardData(text: targetText));
+    }
+
+    Fluttertoast.showToast(
+      msg: 'Текст скопирован!',
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.black,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
   
   void pasteText() async{
