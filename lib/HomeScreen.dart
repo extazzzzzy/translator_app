@@ -219,10 +219,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    if (screenWidth < 450) {
-      _fontSize = 18;
-      _valButWidth = 26;
-      _valButHeight = 39;
+    if (screenWidth <= 320) {
+      _fontSize = 16;
+      _valButWidth = 22;
+      _valButHeight = 32;
+    }
+    else if (screenWidth > 320 && screenWidth <= 425) {
+      _fontSize = 20;
+      _valButWidth = 28;
+      _valButHeight = 38;
     }
     else {
       _fontSize = 20;
@@ -533,7 +538,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         ),
                       ),
                       Container(margin: EdgeInsets.symmetric(vertical: 2),),
-                      if (sourceLanguageText == 'Мансийский') BuildButtonRow(['ā', 'ē', 'ё̄', 'ӣ', 'ӈ', 'о̄', 'ӯ', 'ы̄', 'э̄', 'ю̄', 'я̄']),
+                      if (sourceLanguageText == 'Мансийский')
+                        AnimatedOpacity(
+                          opacity: _isTextVisible ? 1.0 : 0.0,
+                          duration: Duration(milliseconds: 300),
+                          child: BuildButtonRow(['ā', 'ē', 'ё̄', 'ӣ', 'ӈ', 'о̄', 'ӯ', 'ы̄', 'э̄', 'ю̄', 'я̄']),)
+                      else
+                        AnimatedOpacity(
+                          opacity: !_isTextVisible ? 1.0 : 0.0,
+                          duration: Duration(milliseconds: 900),
+                          child: Container(margin: EdgeInsets.symmetric(vertical: 26),),),
                       BuildButtonRow(['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ']),
                       BuildButtonRow(['ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э']),
                       BuildButtonRow(['↑', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '⌫',]),
