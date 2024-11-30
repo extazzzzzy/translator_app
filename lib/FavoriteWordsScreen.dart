@@ -100,7 +100,7 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen>
                 ),
                 actions: [
                   IconButton(
-                    icon: Icon(Icons.delete_forever, color: Colors.white),
+                    icon: Icon(Icons.delete_forever, color: Colors.white, size: 30,),
                     onPressed: () async {
                       bool? confirmDelete = await showDialog(
                         context: context,
@@ -116,7 +116,7 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen>
                             ),
                             TextButton(
                               child: Text(
-                                'Удалить',
+                                  'Удалить',
                                 style: TextStyle(color: Colors.black),
                               ),
                               onPressed: () => Navigator.pop(context, true),
@@ -162,8 +162,11 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen>
 
                         },
                         background: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                           alignment: Alignment.centerRight,
-                          color: Colors.red,
                           padding: EdgeInsets.only(right: 20),
                           child: Icon(
                             Icons.delete,
@@ -182,45 +185,62 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen>
                               margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                               child: Card(
                                 margin: EdgeInsets.zero,
-                                color: Color.fromRGBO(9, 147, 140, 1),
+                                color: Color.fromRGBO(9, 147, 140, 0.8),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  side: BorderSide(
+                                    color: Color.fromRGBO(8, 133, 126, 0.8),
+                                    width: 3.5,
+                                  ),
+                                ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),
-                                  child: Column(
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
-                                      Text(
-                                        originalWord,
-                                        maxLines: isExpandedList[index] ? null : 1,
-                                        overflow: isExpandedList[index] ? TextOverflow.visible : TextOverflow.ellipsis,
-                                        style: TextStyle(fontSize: 20, fontFamily: 'Montserrat', color: Colors.white),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      Text(
-                                        '—',
-                                        style: TextStyle(fontSize: 20, fontFamily: 'Montserrat', color: Colors.white),
-                                      ),
-                                      Text(
-                                        translatedWord,
-                                        maxLines: isExpandedList[index] ? null : 1,
-                                        overflow: isExpandedList[index] ? TextOverflow.visible : TextOverflow.ellipsis,
-                                        style: TextStyle(fontSize: 20, fontFamily: 'Montserrat', color: Colors.white),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      if (isOriginalOverflowing || isTranslatedOverflowing)
-                                        IconButton(
-                                          icon: Icon(
-                                            isExpandedList[index] ? Icons.expand_less : Icons.expand_more,
-                                          ),
-                                          color: Colors.white,
-                                          onPressed: () {
-                                            setState(() {
-                                              isExpandedList[index] = !isExpandedList[index];
-                                            });
-                                          },
+                                      Expanded(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              originalWord,
+                                              maxLines: isExpandedList[index] ? null : 1,
+                                              overflow: isExpandedList[index] ? TextOverflow.visible : TextOverflow.ellipsis,
+                                              style: TextStyle(fontSize: 20, fontFamily: 'Montserrat', color: Colors.white),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Text(
+                                              '—',
+                                              style: TextStyle(fontSize: 20, fontFamily: 'Montserrat', color: Colors.white),
+                                            ),
+                                            Text(
+                                              translatedWord,
+                                              maxLines: isExpandedList[index] ? null : 1,
+                                              overflow: isExpandedList[index] ? TextOverflow.visible : TextOverflow.ellipsis,
+                                              style: TextStyle(fontSize: 20, fontFamily: 'Montserrat', color: Colors.white),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            if (isOriginalOverflowing || isTranslatedOverflowing)
+                                              IconButton(
+                                                icon: Icon(
+                                                  isExpandedList[index] ? Icons.expand_less : Icons.expand_more,
+                                                ),
+                                                color: Colors.white,
+                                                onPressed: () {
+                                                  setState(() {
+                                                    isExpandedList[index] = !isExpandedList[index];
+                                                  });
+                                                },
+                                              ),
+                                          ],
                                         ),
+                                      ),
+                                      Icon(Icons.arrow_back_ios, color: Colors.white), // Или другая иконка по вашему выбору),
                                     ],
                                   ),
+
                                 ),
                               ),
                             );
