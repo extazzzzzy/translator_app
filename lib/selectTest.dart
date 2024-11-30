@@ -231,108 +231,93 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
     );
   }
   Widget BuildGamingMod(String label, String difficulty) {
-    return Container(
-      alignment: Alignment.center,
-      margin: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
-      padding: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 15),
-      decoration: BoxDecoration(
-        color: Color.fromRGBO(9, 147, 140, 0.5),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-            color: Color.fromRGBO(8, 133, 126, 0.5),
-            width: 3.5
+    Color boxColor = Color.fromRGBO(12, 205, 195, 0.6);
+    if (difficulty == 'phrases')
+      boxColor = Color.fromRGBO(9, 147, 140, 0.6);
+    else if (difficulty == 'sentences')
+      boxColor = Color.fromRGBO(4, 61, 58, 0.6);
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => GamingScreen(difficulty: difficulty, sourceLanguage: sourceLanguageText, targetLanguage: targetLanguageText,)),
+        );
+      },
+      child: Container(
+        alignment: Alignment.center,
+        margin: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
+        padding: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 15),
+        decoration: BoxDecoration(
+          color: boxColor,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+              color: Color.fromRGBO(8, 133, 126, 0.5),
+              width: 3.5
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              spreadRadius: 3,
+              blurRadius: 5,
+              offset: Offset(0, 3),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 3,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-                fontSize: 25,
-                color: Colors.white,
-                fontFamily: 'Montserrat'
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top:15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Icon(
-                  Icons.access_time,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                  fontSize: 25,
                   color: Colors.white,
-                ),
-                Text(
-                  '00:00', //заменить на лучшее время
-                  style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.white,
-                      fontFamily: 'Montserrat'
-                  ),
-                ),
-                Icon(
-                  Icons.beenhere_outlined,
-                  color: Colors.white,
-                ),
-                Text(
-                  '7/10', //заменить на лучший результат
-                  style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.white,
-                      fontFamily: 'Montserrat'
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => GamingScreen(difficulty: difficulty, sourceLanguage: sourceLanguageText, targetLanguage: targetLanguageText,)),
-                );
-              },
-              child: Container(
-                margin: EdgeInsets.only(top:20),
-                padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-                decoration: BoxDecoration(
-                  color: Color.fromRGBO(9, 147, 20, 0.45),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                      color: Color.fromRGBO(6, 78, 73, 0.3),
-                      width: 3.5
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      spreadRadius: 3,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Text(
-                  'Начать тест',
-                  style: TextStyle(
-                      fontSize: _fontSize,
-                      color: Colors.white,
-                      fontFamily: 'Montserrat'
-                  ),
-                ),
+                  fontFamily: 'Montserrat'
               ),
             ),
-          )
-        ],
+            Container(
+              margin: EdgeInsets.only(top:15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Icon(
+                    Icons.access_time,
+                    color: Colors.white,
+                  ),
+                  Text(
+                    '00:00', //заменить на лучшее время
+                    style: TextStyle(
+                        fontSize: 25,
+                        color: Colors.white,
+                        fontFamily: 'Montserrat'
+                    ),
+                  ),
+                  Icon(
+                    Icons.beenhere_outlined,
+                    color: Colors.white,
+                  ),
+                  Text(
+                    '7/10', //заменить на лучший результат
+                    style: TextStyle(
+                        fontSize: 25,
+                        color: Colors.white,
+                        fontFamily: 'Montserrat'
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              alignment: Alignment.centerRight,
+              margin: EdgeInsets.only(top:20),
+              padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+              child: Icon(
+                Icons.redo,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
