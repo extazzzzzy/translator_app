@@ -6,6 +6,7 @@ import 'package:translator/HomeScreen.dart';
 import 'package:translator/selectTest.dart';
 import 'dart:async';
 import 'package:video_player/video_player.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GamingScreen extends StatefulWidget
 {
@@ -35,9 +36,17 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
   String question = "";
   String answer = "Привет! Давай поиграем!";
 
-  List<String> goodGirlFaceNames = ["glad", "merry1", "merry2", "merry3"];
-  List<String> badGirlFaceNames = ["angry", "sad", "confused", "surprised"];
+  List<String> goodGirlFaceNames = ["glad", "merry1", "surprised"];
+  List<String> badGirlFaceNames = ["angry", "sad", "confused"];
   String girlFaceName = "glad";
+  String newGirlFaceName = "";
+
+  void saveGameData(int rightAnswersCount, int time) async
+  {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('rightAnswersCount', rightAnswersCount);
+    prefs.setInt('time', time);
+  }
 
   Future<void> pickRandomRows(int count) async
   {
@@ -107,59 +116,91 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
   {
     setState(()
     {
-      isAnswerTrue = 0;
-      if (!isAnswerShowing)
+      if (buttonText == "Вернуться")
+      {
+        saveGameData(rightAnswersCount, timer);
+        Navigator.pushReplacement
+        (
+          context,
+          MaterialPageRoute(builder: (context) => selectTestScreen()),
+        );
+      }
+
+      if (buttonText == "Проверить")
       {
         var correctAnswer = pairs[currentTaskIndex][widget.targetLanguage];
 
-        if (currentTaskIndex >= pairs.length)
-        {
-          if (buttonText == "Вернуться")
-          {
-            Navigator.pushReplacement
-            (
-              context,
-              MaterialPageRoute(builder: (context) => selectTestScreen()),
-            );
-          }
-          else
-          {
-            _timer.cancel();
-            isAnswerShowing = false;
-            buttonText = "Вернуться";
-            question = "Выполнено верно: $rightAnswersCount/10";
-            answer = "Время: ${timer ~/ 60} мин ${timer % 60} сек";
-          }
-        }
-        else
-        {
-          answer = "Правильный ответ: " + pairs[currentTaskIndex][widget.targetLanguage]!;
-        }
-
         if (userAnswer.trim().toLowerCase() == correctAnswer?.trim().toLowerCase())
         {
-          girlFaceName = goodGirlFaceNames[Random().nextInt(goodGirlFaceNames.length - 1)];
+          do
+          {
+            newGirlFaceName = goodGirlFaceNames[Random().nextInt(goodGirlFaceNames.length)];
+          }
+          while (newGirlFaceName == girlFaceName);
+          girlFaceName = newGirlFaceName;
+
+          girlFaceName = newGirlFaceName;
           rightAnswersCount++;
           isAnswerTrue = 1;
         }
         else
         {
-          girlFaceName = badGirlFaceNames[Random().nextInt(badGirlFaceNames.length - 1)];
+          do
+          {
+            newGirlFaceName = badGirlFaceNames[Random().nextInt(badGirlFaceNames.length)];
+          }
+          while (newGirlFaceName == girlFaceName);
+          girlFaceName = newGirlFaceName;
           isAnswerTrue = 2;
+          isAnswerShowing = true;
+          answer = "Правильный ответ: " + pairs[currentTaskIndex][widget.targetLanguage]!;
         }
+      }
+      
+      if (currentTaskIndex >= pairs.length-1 && buttonText == "Далее")
+        {
+          _timer.cancel();
+          isAnswerShowing = true;
+          buttonText = "Вернуться";
+          question = "Выполнено верно: $rightAnswersCount/10";
+          answer = "Время: ${timer ~/ 60} мин ${timer % 60} сек";
 
-        isAnswerShowing = true;
-        buttonText = "Далее";
-      }
-      else
-      {
-        clearText();
-        sourceText = pairs[currentTaskIndex+1][widget.targetLanguage]!; // ЧИТ НА ОТВЕТ
-        currentTaskIndex++;
-        question = pairs[currentTaskIndex][widget.sourceLanguage]!;
-        isAnswerShowing = false;
-        buttonText = "Проверить";
-      }
+          if (rightAnswersCount > 5)
+          {
+            do
+            {
+              newGirlFaceName = goodGirlFaceNames[Random().nextInt(goodGirlFaceNames.length)];
+            }
+            while (newGirlFaceName == girlFaceName);
+            girlFaceName = newGirlFaceName;
+          }
+          else
+          {
+            do
+            {
+              newGirlFaceName = badGirlFaceNames[Random().nextInt(badGirlFaceNames.length)];
+            }
+            while (newGirlFaceName == girlFaceName);
+            girlFaceName = newGirlFaceName;
+          }
+        }
+        else
+        {
+          if (buttonText == "Далее")
+          {
+            currentTaskIndex++;
+            clearText();
+            sourceText = pairs[currentTaskIndex][widget.targetLanguage]!; // ЧИТ НА ОТВЕТ
+            question = pairs[currentTaskIndex][widget.sourceLanguage]!;
+            isAnswerShowing = false;
+            buttonText = "Проверить";
+            isAnswerTrue = 0;
+          }
+          else
+          {
+            buttonText = "Далее";
+          }
+        }
     });
   }
 
@@ -500,7 +541,7 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
                                   ],
                                 ),
                                 child: Text(
-                                  (currentTaskIndex+1).toString() + '/10',
+                                  (currentTaskIndex < 10 ? (currentTaskIndex+1) : currentTaskIndex) .toString() + '/10',
                                   style: TextStyle(
                                     fontSize: 25,
                                     fontFamily: 'Montserrat',
@@ -576,7 +617,7 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
         height: valButHeight,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Color.fromRGBO(7, 96, 90, 0.45),
+          color: Color.fromRGBO(7, 96, 90, 0.8),
           borderRadius: BorderRadius.circular(borderCircul),
           border: Border.all(
               color: Color.fromRGBO(7, 96, 90, 0.45),
