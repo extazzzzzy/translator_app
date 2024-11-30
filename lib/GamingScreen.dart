@@ -267,10 +267,29 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
       }
     }
   }
-
+  double _fontSize = 0;
+  double _valButWidth = 0;
+  double _valButHeight = 0;
+  double _imageSize = 0;
   @override
   Widget build(BuildContext context)
   {
+    double screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth < 425) {
+      _fontSize = 18;
+      _valButWidth = 24;
+      _valButHeight = 37;
+
+      // для карточек
+      _imageSize = 130;
+    }
+    else {
+      _fontSize = 20;
+      _valButWidth = 28;
+      _valButHeight = 41;
+
+      _imageSize = 150;
+    }
     return Scaffold(
         body: Stack(
             children: [
@@ -286,7 +305,7 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
                     elevation: 0,
                     centerTitle: true,
                     title: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
                           onPressed: (){
@@ -301,13 +320,14 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
                           ),
                         ),
                         Text(
-                          'Мансийский переводчик',
+                          'Перевод \n текста',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: _fontSize,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                             fontFamily: 'Montserrat',
                           ),
+                          textAlign: TextAlign.center,
                         ),
                         IconButton(
                           onPressed: (){
@@ -336,65 +356,68 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
                                       margin: EdgeInsets.only(right: 15, left: 15, top: 110),
                                       child: Image.asset(
                                         "src/img/" + girlFaceName + ".png",
-                                        height: 180,
+                                        height: _imageSize,
                                       ),
                                     ),
                                     Column(
                                       children: [
-                                        Container(
-                                          height: 130,
-                                          width: 180,
-                                          margin: EdgeInsets.only(top: 15, right: 10),
-                                          decoration: BoxDecoration(
-                                            color: Color.fromRGBO(9, 147, 140, 0.45),
-                                            borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(40),
-                                              topLeft: Radius.circular(65),
-                                              bottomLeft: Radius.circular(0),
-                                              bottomRight: Radius.circular(65),
-                                            ),
-                                            border: Border.all(
-                                              color: Color.fromRGBO(6, 78, 73, 0.3),
-                                              width: 3.5,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withOpacity(0.2),
-                                                spreadRadius: 3,
-                                                blurRadius: 5,
-                                                offset: Offset(0, 3),
-                                              ),
-                                            ],
+                                      Container(
+                                      height: 150,
+                                      width: 185,
+                                      margin: EdgeInsets.only(top: 15, right: 10),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromRGBO(9, 147, 140, 0.45),
+                                        borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(40),
+                                          topLeft: Radius.circular(65),
+                                          bottomLeft: Radius.circular(0),
+                                          bottomRight: Radius.circular(65),
+                                        ),
+                                        border: Border.all(
+                                          color: Color.fromRGBO(6, 78, 73, 0.3),
+                                          width: 3.5,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.2),
+                                            spreadRadius: 3,
+                                            blurRadius: 5,
+                                            offset: Offset(0, 3),
                                           ),
-                                          child: Stack(
-                                            children: [
-                                              Container(
-                                                margin: EdgeInsets.fromLTRB(10, 18, 10, 0),
-                                                padding: EdgeInsets.all(10),
-                                                child: AnimatedOpacity
-                                                  (
-                                                  opacity: _isTextVisible ? 1.0 : 0.0,
-                                                  duration: Duration(milliseconds: 300),
-                                                  child: Text(
-                                                    question,
-                                                    style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontFamily: 'Montserrat',
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                    textAlign: TextAlign.left,),
+                                        ],
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          Container(
+                                            margin: EdgeInsets.fromLTRB(10, 18, 10, 0),
+                                            padding: EdgeInsets.all(10),
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.vertical,
+                                              child: AnimatedOpacity(
+                                                opacity: _isTextVisible ? 1.0 : 0.0,
+                                                duration: Duration(milliseconds: 300),
+                                                child: Text(
+                                                  question,
+                                                  style: TextStyle(
+                                                    fontSize: _fontSize,
+                                                    fontFamily: 'Montserrat',
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                                  textAlign: TextAlign.left,
                                                 ),
                                               ),
-                                            ],
+                                            ),
                                           ),
-                                        ),
-                                        AnimatedOpacity(
+                                        ],
+                                      ),
+                                    ),
+                                    AnimatedOpacity(
                                             opacity: isAnswerShowing ? 1.0 : 0.0,
                                             duration: Duration(milliseconds: 300),
                                             child: Container(
-                                              height: 130,
-                                              width: 180,
+                                              height: 150,
+                                              width: 185,
                                               margin: EdgeInsets.only(top: 15, right: 10),
                                               decoration: BoxDecoration(
                                                 color: Color.fromRGBO(9, 147, 140, 0.45),
@@ -422,15 +445,18 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
                                                   Container(
                                                     margin: EdgeInsets.fromLTRB(10, 18, 10, 0),
                                                     padding: EdgeInsets.all(10),
-                                                    child: Text(
-                                                      answer,
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        fontFamily: 'Montserrat',
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.white,
+                                                    child: SingleChildScrollView(
+                                                      scrollDirection: Axis.vertical,
+                                                      child: Text(
+                                                        answer,
+                                                        style: TextStyle(
+                                                          fontSize: _fontSize,
+                                                          fontFamily: 'Montserrat',
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Colors.white,
+                                                        ),
+                                                        textAlign: TextAlign.left,
                                                       ),
-                                                      textAlign: TextAlign.left,
                                                     ),
                                                   ),
                                                 ],
@@ -474,26 +500,29 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
                             child: Stack(
                               children: [
                                 Container(
-                                  margin: EdgeInsets.fromLTRB(10, 18, 10, 0),
+                                  margin: EdgeInsets.fromLTRB(10, 0, 30, 0),
                                   padding: EdgeInsets.all(10),
                                   child: AnimatedOpacity(
                                     opacity: _isTextVisible ? 1.0 : 0.0,
                                     duration: Duration(milliseconds: 300),
-                                    child: Text(
-                                      sourceText.isEmpty ? 'Введите ответ' : sourceText,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.vertical,
+                                      child: Text(
+                                        sourceText.isEmpty ? 'Введите ответ' : sourceText,
+                                        style: TextStyle(
+                                          fontSize: _fontSize,
+                                          fontFamily: 'Montserrat',
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                        textAlign: TextAlign.left,
                                       ),
-                                      textAlign: TextAlign.left,
                                     ),
                                   ),
                                 ),
                                 Positioned(
-                                  top: 10,
-                                  right: 10,
+                                  top: 0,
+                                  right: 0,
                                   child: IconButton(
                                     onPressed: isTranslating
                                         ? null
@@ -573,8 +602,8 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
   bool isCapsLock = false;
 
   Widget buttonStyle(String label) {
-    double valButWidth = 29;
-    double valButHeight = 42;
+    double valButWidth = _valButWidth;
+    double valButHeight = _valButHeight;
     double borderCircul = 10;
     double margVert = 3;
     double margHoris = 3;

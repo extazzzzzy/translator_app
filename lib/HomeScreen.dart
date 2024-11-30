@@ -218,16 +218,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-
-    if (screenWidth <= 320) {
-      _fontSize = 16;
-      _valButWidth = 22;
-      _valButHeight = 32;
-    }
-    else if (screenWidth > 320 && screenWidth <= 425) {
-      _fontSize = 20;
-      _valButWidth = 28;
-      _valButHeight = 38;
+    if (screenWidth < 425) {
+      _fontSize = 18;
+      _valButWidth = 24;
+      _valButHeight = 37;
     }
     else {
       _fontSize = 20;
@@ -452,7 +446,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 onPressed: () {
                                   saveFavoriteInCache();
                                 },
-                                icon: Icon(Icons.library_add, color: Colors.white),
+                                icon: Icon(Icons.bookmark_add_rounded, color: Colors.white),
                               ),
                             ),
                             Positioned(
@@ -462,6 +456,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 onPressed: () {
                                   setState(() {
                                     pasteText();
+                                    translateText();
                                   });
                                 },
                                 icon: Icon(Icons.content_paste_go_rounded, color: Colors.white),
@@ -612,7 +607,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           if (label == '↑') {
             isCapsLock = !isCapsLock;
           }
-          else if (label != '⌫') {
+          else {
             editSourceText(label);
             _debounceTimer?.cancel();
             _debounceTimer = Timer(Duration(seconds: 1), () {
