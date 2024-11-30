@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:translator/FavoriteWordsScreen.dart';
 import 'package:translator/selectTest.dart';
 import 'package:video_player/video_player.dart';
@@ -200,12 +201,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       textColor: Colors.white,
       fontSize: 16.0,
     );
+
   }
   
   void pasteText() async{
     ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
     if (data != null && data.text != null && data.text!.isNotEmpty) {
       sourceText += data.text!;
+      var temp = sourceText;
+      sourceText = '';
+      sourceText = temp;
     }
     else {
       sourceText = '';
@@ -228,6 +233,59 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       _valButWidth = 28;
       _valButHeight = 41;
     }
+
+    void sendGoodResponse() async {
+      if (sourceText.isNotEmpty && targetText.isNotEmpty) {
+        final SupabaseClient supabase = Supabase.instance.client;
+        await supabase.from('responses_good')
+            .insert({
+          'source_language': sourceLanguageText,
+          'target_language': targetLanguageText,
+          'source_text': sourceText,
+          'target_text': targetText
+        });
+
+        Fluttertoast.showToast(
+          msg: 'Благодарим за обратную связь!',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+      else {
+        Fluttertoast.showToast(
+          msg: 'Запрос перевода не найден',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+    }
+
+    void sendBadResponse(String description) async {
+      final SupabaseClient supabase = Supabase.instance.client;
+      await supabase.from('responses_bad')
+          .insert({
+        'source_language': sourceLanguageText,
+        'target_language': targetLanguageText,
+        'source_text': sourceText,
+        'target_text': targetText,
+        'description': description,
+      });
+
+        Fluttertoast.showToast(
+          msg: 'Благодарим за обратную связь!',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
 
     return Scaffold(
       body: Stack(
@@ -456,7 +514,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 onPressed: () {
                                   setState(() {
                                     pasteText();
-                                    translateText();
+                                    Future.delayed(Duration(milliseconds: 1000), () {
+                                      setState(() {
+                                        translateText();
+                                      });
+                                    });
                                   });
                                 },
                                 icon: Icon(Icons.content_paste_go_rounded, color: Colors.white),
@@ -527,6 +589,141 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                   copyText('target');
                                 },
                                 icon: Icon(Icons.copy, color: Colors.white),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 30,
+                              child: IconButton(
+                                onPressed: () {
+                                  if (sourceText.isNotEmpty && targetText.isNotEmpty) {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20)),
+                                      ),
+                                      builder: (BuildContext context) {
+                                        String? selectedIssue;
+
+                                        return StatefulBuilder(
+                                          builder: (context, setState) =>
+                                              Padding(
+                                                padding: const EdgeInsets.all(
+                                                    16.0),
+                                                child: Column(
+                                                  mainAxisSize: MainAxisSize
+                                                      .min,
+                                                  children: [
+                                                    Text(
+                                                      'Выберите проблему',
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight: FontWeight
+                                                              .bold),
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    RadioListTile<String>(
+                                                      title: Text(
+                                                          "Ошибка перевода"),
+                                                      value: "Ошибка перевода",
+                                                      groupValue: selectedIssue,
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          selectedIssue = value;
+                                                        });
+                                                      },
+                                                    ),
+                                                    RadioListTile<String>(
+                                                      title: Text(
+                                                          "Некорректное отображение"),
+                                                      value: "Некорректное отображение",
+                                                      groupValue: selectedIssue,
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          selectedIssue = value;
+                                                        });
+                                                      },
+                                                    ),
+                                                    RadioListTile<String>(
+                                                      title: Text(
+                                                          "Дублирование перевода"),
+                                                      value: "Дублирование перевода",
+                                                      groupValue: selectedIssue,
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          selectedIssue = value;
+                                                        });
+                                                      },
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment
+                                                          .end,
+                                                      children: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.of(
+                                                                  context)
+                                                                  .pop(),
+                                                          child: Text('Отмена'),
+                                                        ),
+                                                        ElevatedButton(
+                                                          onPressed: () {
+                                                            if (selectedIssue !=
+                                                                null) {
+                                                              sendBadResponse(
+                                                                  selectedIssue!);
+                                                              Navigator.of(
+                                                                  context)
+                                                                  .pop();
+                                                            } else {
+                                                              ScaffoldMessenger
+                                                                  .of(context)
+                                                                  .showSnackBar(
+                                                                SnackBar(
+                                                                  content: Text(
+                                                                      'Выберите проблему перед отправкой'),
+                                                                  backgroundColor: Colors
+                                                                      .red,
+                                                                ),
+                                                              );
+                                                            }
+                                                          },
+                                                          child: Text(
+                                                              'Отправить'),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                        );
+                                      },
+                                    );
+                                  }
+                                  else {
+                                    Fluttertoast.showToast(
+                                      msg: 'Запрос перевода не найден',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      backgroundColor: Colors.black,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0,
+                                    );
+                                  }
+                                },
+                                icon: Icon(Icons.thumb_down_alt_sharp, color: Colors.white),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 60,
+                              child: IconButton(
+                                onPressed: () {
+                                  sendGoodResponse();
+                                },
+                                icon: Icon(Icons.thumb_up_alt_sharp, color: Colors.white),
                               ),
                             ),
                           ],
