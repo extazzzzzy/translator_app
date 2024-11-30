@@ -59,39 +59,39 @@ class selectTest extends State<selectTestScreen>  with SingleTickerProviderState
         });
       });
   }
-  
+
 
   Future<void> _loadGameData() async {
     final prefs = await SharedPreferences.getInstance();
   }
 
   Future<int> _getGameLastTime(String difficulty) async {
-  final prefs = await SharedPreferences.getInstance();
-  switch (difficulty) {
-    case "words":
-      return prefs.getInt('lastTimeWords') ?? 0;
-    case "phrases":
-      return prefs.getInt('lastTimePhrases') ?? 0;
-    case "sentences":
-      return prefs.getInt('lastTimeSentences') ?? 0;
-    default:
-      return 0;
+    final prefs = await SharedPreferences.getInstance();
+    switch (difficulty) {
+      case "words":
+        return prefs.getInt('lastTimeWords') ?? 0;
+      case "phrases":
+        return prefs.getInt('lastTimePhrases') ?? 0;
+      case "sentences":
+        return prefs.getInt('lastTimeSentences') ?? 0;
+      default:
+        return 0;
+    }
   }
-}
 
-Future<int> _getGameLastRightAnswerCount(String difficulty) async {
-  final prefs = await SharedPreferences.getInstance();
-  switch (difficulty) {
-    case "words":
-      return prefs.getInt('lastRightAnswerCountWords') ?? 0;
-    case "phrases":
-      return prefs.getInt('lastRightAnswerCountPhrases') ?? 0;
-    case "sentences":
-      return prefs.getInt('lastRightAnswerCountSentences') ?? 0;
-    default:
-      return 0;
+  Future<int> _getGameLastRightAnswerCount(String difficulty) async {
+    final prefs = await SharedPreferences.getInstance();
+    switch (difficulty) {
+      case "words":
+        return prefs.getInt('lastRightAnswerCountWords') ?? 0;
+      case "phrases":
+        return prefs.getInt('lastRightAnswerCountPhrases') ?? 0;
+      case "sentences":
+        return prefs.getInt('lastRightAnswerCountSentences') ?? 0;
+      default:
+        return 0;
+    }
   }
-}
 
 
   @override
@@ -274,125 +274,125 @@ Future<int> _getGameLastRightAnswerCount(String difficulty) async {
         )
     );
   }
- Widget BuildGamingMod(String label, String difficulty) {
-  Color boxColor = Color.fromRGBO(12, 205, 195, 0.6);
-  if (difficulty == 'phrases')
-    boxColor = Color.fromRGBO(9, 147, 140, 0.6);
-  else if (difficulty == 'sentences')
-    boxColor = Color.fromRGBO(4, 61, 58, 0.6);
+  Widget BuildGamingMod(String label, String difficulty) {
+    Color boxColor = Color.fromRGBO(12, 205, 195, 0.6);
+    if (difficulty == 'phrases')
+      boxColor = Color.fromRGBO(9, 147, 140, 0.6);
+    else if (difficulty == 'sentences')
+      boxColor = Color.fromRGBO(4, 61, 58, 0.6);
 
-  return GestureDetector(
-    onTap: () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => GamingScreen(
-            difficulty: difficulty,
-            sourceLanguage: sourceLanguageText,
-            targetLanguage: targetLanguageText,
-          ),
-        ),
-      );
-    },
-    child: Container(
-      alignment: Alignment.center,
-      margin: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
-      padding: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 15),
-      decoration: BoxDecoration(
-        color: boxColor,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-            color: Color.fromRGBO(8, 133, 126, 0.5),
-            width: 3.5
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 3,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-                fontSize: 25,
-                color: Colors.white,
-                fontFamily: 'Montserrat'
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GamingScreen(
+              difficulty: difficulty,
+              sourceLanguage: sourceLanguageText,
+              targetLanguage: targetLanguageText,
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 15),
-            child: FutureBuilder<int>(
-              future: _getGameLastRightAnswerCount(difficulty),
-              builder: (context, rightAnswerCountSnapshot) {
-                if (rightAnswerCountSnapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator(color: Colors.white);
-                }
-                int rightAnswerCount = rightAnswerCountSnapshot.data ?? 0;
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Icon(
-                      Icons.beenhere_outlined,
-                      color: Colors.white,
-                    ),
-                    Text(
-                      '$rightAnswerCount/10',
-                      style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                          fontFamily: 'Montserrat'
+        );
+      },
+      child: Container(
+        alignment: Alignment.center,
+        margin: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
+        padding: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 15),
+        decoration: BoxDecoration(
+          color: boxColor,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+              color: Color.fromRGBO(8, 133, 126, 0.5),
+              width: 3.5
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              spreadRadius: 3,
+              blurRadius: 5,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                  fontSize: 25,
+                  color: Colors.white,
+                  fontFamily: 'Montserrat'
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 15),
+              child: FutureBuilder<int>(
+                future: _getGameLastRightAnswerCount(difficulty),
+                builder: (context, rightAnswerCountSnapshot) {
+                  if (rightAnswerCountSnapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator(color: Colors.white);
+                  }
+                  int rightAnswerCount = rightAnswerCountSnapshot.data ?? 0;
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Icon(
+                        Icons.beenhere_outlined,
+                        color: Colors.white,
                       ),
-                    ),
-                    Icon(
-                      Icons.access_time,
-                      color: Colors.white,
-                    ),
-                    FutureBuilder<int>(
-                      future: _getGameLastTime(difficulty),
-                      builder: (context, timeSnapshot) {
-                        if (timeSnapshot.connectionState == ConnectionState.waiting) {
-                          return CircularProgressIndicator(color: Colors.white);
-                        }
-                        int lastTime = timeSnapshot.data ?? 0;
+                      Text(
+                        '$rightAnswerCount/10',
+                        style: TextStyle(
+                            fontSize: 25,
+                            color: Colors.white,
+                            fontFamily: 'Montserrat'
+                        ),
+                      ),
+                      Icon(
+                        Icons.access_time,
+                        color: Colors.white,
+                      ),
+                      FutureBuilder<int>(
+                        future: _getGameLastTime(difficulty),
+                        builder: (context, timeSnapshot) {
+                          if (timeSnapshot.connectionState == ConnectionState.waiting) {
+                            return CircularProgressIndicator(color: Colors.white);
+                          }
+                          int lastTime = timeSnapshot.data ?? 0;
 
-                        int minutes = lastTime ~/ 60;
-                        int seconds = lastTime % 60;
-                        String timeFormatted = '$minutes мин $seconds сек';
+                          int minutes = lastTime ~/ 60;
+                          int seconds = lastTime % 60;
+                          String timeFormatted = '$minutes мин $seconds сек';
 
-                        return Text(
-                          timeFormatted,
-                          style: TextStyle(
-                              fontSize: 25,
-                              color: Colors.white,
-                              fontFamily: 'Montserrat'
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                );
-              },
+                          return Text(
+                            timeFormatted,
+                            style: TextStyle(
+                                fontSize: 25,
+                                color: Colors.white,
+                                fontFamily: 'Montserrat'
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
-          ),
-          Container(
-            alignment: Alignment.centerRight,
-            margin: EdgeInsets.only(top: 20),
-            padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-            child: Icon(
-              Icons.redo,
-              color: Colors.white,
-              size: 30,
+            Container(
+              alignment: Alignment.centerRight,
+              margin: EdgeInsets.only(top: 20),
+              padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+              child: Icon(
+                Icons.redo,
+                color: Colors.white,
+                size: 30,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
- }
+    );
+  }
 }

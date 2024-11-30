@@ -116,7 +116,7 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen>
                             ),
                             TextButton(
                               child: Text(
-                                  'Удалить',
+                                'Удалить',
                                 style: TextStyle(color: Colors.black),
                               ),
                               onPressed: () => Navigator.pop(context, true),

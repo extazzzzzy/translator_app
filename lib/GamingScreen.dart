@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class GamingScreen extends StatefulWidget
 {
   const GamingScreen({super.key, required this.difficulty, required  this.sourceLanguage, required  this.targetLanguage});
-  
+
   final String difficulty;
   final String sourceLanguage;
   final String targetLanguage;
@@ -20,7 +20,7 @@ class GamingScreen extends StatefulWidget
   State<GamingScreen> createState() => _GamingScreenState();
 }
 
-class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderStateMixin 
+class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderStateMixin
 {
   List<Map<String, String>> pairs = [];
   int rightAnswersCount = 0;
@@ -134,7 +134,7 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
       {
         saveGameData(rightAnswersCount, timer, widget.difficulty);
         Navigator.pushReplacement
-        (
+          (
           context,
           MaterialPageRoute(builder: (context) => selectTestScreen()),
         );
@@ -170,51 +170,51 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
           answer = "Правильный ответ: " + pairs[currentTaskIndex][widget.targetLanguage]!;
         }
       }
-      
-      if (currentTaskIndex >= pairs.length-1 && buttonText == "Далее")
-        {
-          _timer.cancel();
-          isAnswerShowing = true;
-          buttonText = "Вернуться";
-          question = "Выполнено верно: $rightAnswersCount/10";
-          answer = "Время: ${timer ~/ 60} мин ${timer % 60} сек";
 
-          if (rightAnswersCount > 5)
+      if (currentTaskIndex >= pairs.length-1 && buttonText == "Далее")
+      {
+        _timer.cancel();
+        isAnswerShowing = true;
+        buttonText = "Вернуться";
+        question = "Выполнено верно: $rightAnswersCount/10";
+        answer = "Время: ${timer ~/ 60} мин ${timer % 60} сек";
+
+        if (rightAnswersCount > 5)
+        {
+          do
           {
-            do
-            {
-              newGirlFaceName = goodGirlFaceNames[Random().nextInt(goodGirlFaceNames.length)];
-            }
-            while (newGirlFaceName == girlFaceName);
-            girlFaceName = newGirlFaceName;
+            newGirlFaceName = goodGirlFaceNames[Random().nextInt(goodGirlFaceNames.length)];
           }
-          else
-          {
-            do
-            {
-              newGirlFaceName = badGirlFaceNames[Random().nextInt(badGirlFaceNames.length)];
-            }
-            while (newGirlFaceName == girlFaceName);
-            girlFaceName = newGirlFaceName;
-          }
+          while (newGirlFaceName == girlFaceName);
+          girlFaceName = newGirlFaceName;
         }
         else
         {
-          if (buttonText == "Далее")
+          do
           {
-            currentTaskIndex++;
-            clearText();
-            sourceText = pairs[currentTaskIndex][widget.targetLanguage]!; // ЧИТ НА ОТВЕТ
-            question = pairs[currentTaskIndex][widget.sourceLanguage]!;
-            isAnswerShowing = false;
-            buttonText = "Проверить";
-            isAnswerTrue = 0;
+            newGirlFaceName = badGirlFaceNames[Random().nextInt(badGirlFaceNames.length)];
           }
-          else
-          {
-            buttonText = "Далее";
-          }
+          while (newGirlFaceName == girlFaceName);
+          girlFaceName = newGirlFaceName;
         }
+      }
+      else
+      {
+        if (buttonText == "Далее")
+        {
+          currentTaskIndex++;
+          clearText();
+          sourceText = pairs[currentTaskIndex][widget.targetLanguage]!; // ЧИТ НА ОТВЕТ
+          question = pairs[currentTaskIndex][widget.sourceLanguage]!;
+          isAnswerShowing = false;
+          buttonText = "Проверить";
+          isAnswerTrue = 0;
+        }
+        else
+        {
+          buttonText = "Далее";
+        }
+      }
     });
   }
 
@@ -375,58 +375,58 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
                                     ),
                                     Column(
                                       children: [
-                                      Container(
-                                      height: 150,
-                                      width: 185,
-                                      margin: EdgeInsets.only(top: 15, right: 10),
-                                      decoration: BoxDecoration(
-                                        color: Color.fromRGBO(9, 147, 140, 0.45),
-                                        borderRadius: BorderRadius.only(
-                                          topRight: Radius.circular(40),
-                                          topLeft: Radius.circular(65),
-                                          bottomLeft: Radius.circular(0),
-                                          bottomRight: Radius.circular(65),
-                                        ),
-                                        border: Border.all(
-                                          color: Color.fromRGBO(6, 78, 73, 0.3),
-                                          width: 3.5,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.2),
-                                            spreadRadius: 3,
-                                            blurRadius: 5,
-                                            offset: Offset(0, 3),
+                                        Container(
+                                          height: 150,
+                                          width: 185,
+                                          margin: EdgeInsets.only(top: 15, right: 10),
+                                          decoration: BoxDecoration(
+                                            color: Color.fromRGBO(9, 147, 140, 0.45),
+                                            borderRadius: BorderRadius.only(
+                                              topRight: Radius.circular(40),
+                                              topLeft: Radius.circular(65),
+                                              bottomLeft: Radius.circular(0),
+                                              bottomRight: Radius.circular(65),
+                                            ),
+                                            border: Border.all(
+                                              color: Color.fromRGBO(6, 78, 73, 0.3),
+                                              width: 3.5,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withOpacity(0.2),
+                                                spreadRadius: 3,
+                                                blurRadius: 5,
+                                                offset: Offset(0, 3),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
-                                      child: Stack(
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.fromLTRB(10, 18, 10, 0),
-                                            padding: EdgeInsets.all(10),
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.vertical,
-                                              child: AnimatedOpacity(
-                                                opacity: _isTextVisible ? 1.0 : 0.0,
-                                                duration: Duration(milliseconds: 300),
-                                                child: Text(
-                                                  question,
-                                                  style: TextStyle(
-                                                    fontSize: _fontSize,
-                                                    fontFamily: 'Montserrat',
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
+                                          child: Stack(
+                                            children: [
+                                              Container(
+                                                margin: EdgeInsets.fromLTRB(10, 18, 10, 0),
+                                                padding: EdgeInsets.all(10),
+                                                child: SingleChildScrollView(
+                                                  scrollDirection: Axis.vertical,
+                                                  child: AnimatedOpacity(
+                                                    opacity: _isTextVisible ? 1.0 : 0.0,
+                                                    duration: Duration(milliseconds: 300),
+                                                    child: Text(
+                                                      question,
+                                                      style: TextStyle(
+                                                        fontSize: _fontSize,
+                                                        fontFamily: 'Montserrat',
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                      textAlign: TextAlign.left,
+                                                    ),
                                                   ),
-                                                  textAlign: TextAlign.left,
                                                 ),
                                               ),
-                                            ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                    AnimatedOpacity(
+                                        ),
+                                        AnimatedOpacity(
                                             opacity: isAnswerShowing ? 1.0 : 0.0,
                                             duration: Duration(milliseconds: 300),
                                             child: Container(
