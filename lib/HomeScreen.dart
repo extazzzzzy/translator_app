@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   String targetLanguage = 'mancy_Cyrl';
   String sourceLanguageText = 'Русский';
   String targetLanguageText = 'Мансийский';
-  String sourceText = 'Цветок';
+  String sourceText = '';
   String targetText = '';
 
   void changeLanguage() {
@@ -149,10 +149,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       sourceText += ' ';
     }
     else {
-      if (isCapsLock == false) {
+      if (isCapsLock == false && label != '⌫') {
         sourceText += label;
       }
-      else {
+      else if (isCapsLock == true && label != '⌫') {
         sourceText += label.toUpperCase();
       }
     }
@@ -380,7 +380,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                     ? null
                                     : () {
                                   setState(() {
-                                    _updateTextVisibility();
                                     Future.delayed(Duration(milliseconds: 500), () {
                                       setState(() {
                                         clearText();

@@ -57,7 +57,6 @@ flutter:
   assets:
     - src/translation_db/translations.xlsx
     - src/design/material/background2.mp4
-    - src/img/1.png
     - src/design/material/background_load.png
     - src/img/glad.png
     - src/img/merry1.png
