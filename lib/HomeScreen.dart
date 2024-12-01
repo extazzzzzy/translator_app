@@ -341,7 +341,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         children: [
           Positioned.fill(
             child: _controllerVideo.value.isInitialized
-                ? VideoPlayer(_controllerVideo)
+                ? FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: _controllerVideo.value.size.width,
+                height: _controllerVideo.value.size.height,
+                child: VideoPlayer(_controllerVideo),
+              ),
+            )
                 : Stack(
               children: [
                 Positioned.fill(
@@ -351,11 +358,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   ),
                 ),
                 Center(
-                  child: CircularProgressIndicator(color: Colors.white,),
+                  child: CircularProgressIndicator(color: Colors.white),
                 ),
               ],
             ),
           ),
+
           Column(
             children: [
               AppBar(
