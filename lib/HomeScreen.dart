@@ -153,18 +153,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       _speech.listen(
         onResult: (result) {
           setState(() {
-            sourceText = result.recognizedWords; // Переводим звуковой ввод в текст
-            _confidence = result.confidence; // Уровень уверенности
+            sourceText = result.recognizedWords;
+            _confidence = result.confidence;
           });
         },
-        localeId: "ru_RU", // Указываем русский язык
+        localeId: "ru_RU",
       );
-    } else {
+    }
+    else
+    {
       setState(() {
         _isListening = false;
       });
-      translateText();
     }
+    Future.delayed(Duration(milliseconds: 1000), () {
+      setState(() {
+        translateText();
+      });
+    });
   }
 
   void _stopListening() {
@@ -172,7 +178,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     setState(() {
       _isListening = false;
     });
-    translateText();
+    Future.delayed(Duration(milliseconds: 1000), () {
+      setState(() {
+        translateText();
+      });
+    });
   }
 
   void editSourceText(String label) {
