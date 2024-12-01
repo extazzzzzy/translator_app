@@ -1,16 +1,21 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:translator/FavoriteWordsScreen.dart';
 import 'package:translator/selectTest.dart';
 import 'package:video_player/video_player.dart';
+
+import 'CheckTextScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -49,12 +54,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  @override
-  void dispose() {
-    _controllerVideo.dispose();
-    _controllerAnimation.dispose();
-    super.dispose();
-  }
 
   String sourceLanguage = 'rus_Cyrl';
   String targetLanguage = 'mancy_Cyrl';
@@ -287,6 +286,31 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         );
       }
 
+    final ImagePicker _picker = ImagePicker();
+    final TextRecognizer _textRecognizer = TextRecognizer();
+
+    Future<void> _pickImage(BuildContext context) async {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        final inputImage = InputImage.fromFile(File(image.path));
+        final RecognizedText recognizedText = await _textRecognizer.processImage(inputImage);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CheckTextScreen(recognizedText: recognizedText.text),
+          ),
+        );
+      }
+    }
+
+    @override
+    void dispose() {
+      _controllerVideo.dispose();
+      _controllerAnimation.dispose();
+      _textRecognizer.close();
+      super.dispose();
+    }
+
     return Scaffold(
       body: Stack(
         children: [
@@ -495,6 +519,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                   Icons.close,
                                   color: isTranslating ? Colors.grey : Colors.white,
                                 ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 90,
+                              child: IconButton(
+                                onPressed: () {
+                                  _pickImage(context);
+                                },
+                                icon: Icon(Icons.camera_alt_rounded, color: Colors.white),
                               ),
                             ),
                             Positioned(
