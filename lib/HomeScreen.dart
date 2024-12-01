@@ -870,7 +870,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           else {
             editSourceText(label);
             _debounceTimer?.cancel();
-            _debounceTimer = Timer(Duration(milliseconds: 300), () {
+            _debounceTimer = Timer(Duration(milliseconds: 1000), () {
               translateText();
             });
           }
