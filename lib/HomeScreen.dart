@@ -540,8 +540,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               bottom: 0,
                               right: 90,
                               child: IconButton(
-                                onPressed: (_isListening && sourceLanguageText == 'Русский')
-                                    ? _stopListening : _startListening,
+                                onPressed: (sourceLanguageText == 'Русский')
+                                    ? ((_isListening) ? _stopListening : _startListening)
+                                    : () {},
                                 icon: Icon(
                                   Icons.mic,
                                   color: sourceLanguageText == 'Русский'
@@ -859,7 +860,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           else {
             editSourceText(label);
             _debounceTimer?.cancel();
-            _debounceTimer = Timer(Duration(seconds: 1), () {
+            _debounceTimer = Timer(Duration(milliseconds: 300), () {
               translateText();
             });
           }
