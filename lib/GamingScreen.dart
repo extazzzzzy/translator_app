@@ -30,7 +30,6 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
   late Timer _timer;
 
   bool isAnswerShowing = false;
-  int isAnswerTrue = 0; //для смены цвета по ответу
   String buttonText = "Проверить";
 
   String question = "";
@@ -124,6 +123,24 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
     {
       print("Ошибка: $e");
     }
+  }
+
+  int isAnswerTrue = 0;
+  Color borderColor = Color.fromRGBO(6, 78, 73, 0.3);
+  void updateAnswer(int answer) {
+    setState(() {
+      isAnswerTrue = answer;
+      borderColor = (() {
+        switch (isAnswerTrue) {
+          case 1:
+            return Color.fromRGBO(0, 183, 0, 1.0);
+          case 2:
+            return Color.fromRGBO(255, 0, 0, 1.0);
+          default:
+            return Color.fromRGBO(6, 78, 73, 0.3);
+        }
+      })();
+    });
   }
 
   void checkAnswer(String userAnswer)
@@ -385,7 +402,7 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
                                               topRight: Radius.circular(40),
                                               topLeft: Radius.circular(65),
                                               bottomLeft: Radius.circular(0),
-                                              bottomRight: Radius.circular(65),
+                                              bottomRight: Radius.circular(55),
                                             ),
                                             border: Border.all(
                                               color: Color.fromRGBO(6, 78, 73, 0.3),
@@ -436,7 +453,7 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
                                               decoration: BoxDecoration(
                                                 color: Color.fromRGBO(9, 147, 140, 0.45),
                                                 borderRadius: BorderRadius.only(
-                                                  topRight: Radius.circular(65),
+                                                  topRight: Radius.circular(55),
                                                   topLeft: Radius.circular(0),
                                                   bottomLeft: Radius.circular(65),
                                                   bottomRight: Radius.circular(40),
@@ -482,7 +499,9 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
                                   ]
                               )
                           ),
-                          Container(
+                          AnimatedContainer(
+                            duration: Duration(milliseconds: 300), // Длительность анимации
+                            curve: Curves.easeInOut,
                             height: 100,
                             width: 390,
                             margin: EdgeInsets.only(top: 15, right: 10, left: 10),
@@ -490,16 +509,7 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
                               color: Color.fromRGBO(4, 61, 58, 0.6),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                  color: (() {
-                                    switch (isAnswerTrue) {
-                                      case 1:
-                                        return Color.fromRGBO(0, 183, 0, 1.0);
-                                      case 2:
-                                        return Color.fromRGBO(255, 0, 0, 1.0);
-                                      default:
-                                        return Color.fromRGBO(6, 78, 73, 0.3);
-                                    }
-                                  })(),
+                                  color: borderColor,
                                   width: 3.5
                               ),
                               boxShadow: [
@@ -553,6 +563,9 @@ class _GamingScreenState extends State<GamingScreen>  with SingleTickerProviderS
                                 ),
                               ],
                             ),
+                          ),
+                          Container(
+
                           ),
                           Container(margin: EdgeInsets.symmetric(vertical: 2),),
                           buildButtonRow(['ā', 'ē', 'ё̄', 'ӣ', 'ӈ', 'о̄', 'ӯ', 'ы̄', 'э̄', 'ю̄', 'я̄']),
