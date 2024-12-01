@@ -4,6 +4,7 @@ import 'package:translator/FavoriteWordsScreen.dart';
 import 'package:translator/HomeScreen.dart';
 import 'package:translator/GamingScreen.dart';
 import 'package:translator/HomeScreen.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 void main() async {
   await Supabase.initialize(
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Translator',
       theme: ThemeData(
         primarySwatch: Colors.blue,

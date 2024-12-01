@@ -11,6 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:translator/FavoriteWordsScreen.dart';
 import 'package:translator/selectTest.dart';
 import 'package:video_player/video_player.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -18,6 +19,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
+  double _confidence = 1.0;
+
   late VideoPlayerController _controllerVideo;
   late AnimationController _controllerAnimation;
   late Animation<double> _rotationAnimation;
@@ -27,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
+    _speech = stt.SpeechToText();
     _controllerVideo = VideoPlayerController.asset("src/design/material/background2.mp4")
       ..initialize().then((_) {
         setState(() {
@@ -134,6 +140,39 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     setState(() {
       isTranslating = false;
     });
+  }
+
+  void _startListening() async {
+    bool available = await _speech.initialize(
+      onStatus: (status) => print("Статус: $status"),
+      onError: (error) => print("Ошибка: $error"),
+    );
+
+    if (available) {
+      setState(() => _isListening = true);
+      _speech.listen(
+        onResult: (result) {
+          setState(() {
+            sourceText = result.recognizedWords; // Переводим звуковой ввод в текст
+            _confidence = result.confidence; // Уровень уверенности
+          });
+        },
+        localeId: "ru_RU", // Указываем русский язык
+      );
+    } else {
+      setState(() {
+        _isListening = false;
+      });
+      translateText();
+    }
+  }
+
+  void _stopListening() {
+    _speech.stop();
+    setState(() {
+      _isListening = false;
+    });
+    translateText();
   }
 
   void editSourceText(String label) {
@@ -494,6 +533,19 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 icon: Icon(
                                   Icons.close,
                                   color: isTranslating ? Colors.grey : Colors.white,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 90,
+                              child: IconButton(
+                                onPressed: (_isListening && sourceLanguageText == 'Русский')
+                                    ? _stopListening : _startListening,
+                                icon: Icon(
+                                  Icons.mic,
+                                  color: sourceLanguageText == 'Русский'
+                                      ? Colors.white : Colors.grey,
                                 ),
                               ),
                             ),
